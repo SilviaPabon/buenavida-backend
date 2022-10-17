@@ -1,5 +1,11 @@
-# Golang compiler
-FROM golang:alpine3.16 AS builder
+# Golang
+FROM golang:alpine3.16
+
+# Watch mode
+RUN go install github.com/cosmtrek/air@latest
+
+# Install bash
+RUN apk add --no-cache bash
 
 # Configs
 ENV GO11MODULE=on \
@@ -15,12 +21,6 @@ COPY api/ ./api/
 WORKDIR /usr/src/buenavida/api
 RUN go mod tidy
 RUN go mod download
-RUN go build main.go
+# RUN go build main.go
 
-# Golang runner
-FROM alpine:3.16 AS runner
-RUN apk add --no-cache bash
 
-WORKDIR /apt/api
-COPY --from=builder /usr/src/buenavida/api .
-RUN ./main

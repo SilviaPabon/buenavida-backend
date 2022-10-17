@@ -20,3 +20,6 @@ services:
     container_name: buenavidaAPI
     depends_on:
       - mongo
+    volumes:
+      - ./api/:/usr/src/buenavida/api
+    command: air
