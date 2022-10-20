@@ -1,11 +1,7 @@
 package main
 
 import (
-	"context"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Article struct {
@@ -40,33 +36,4 @@ type Users struct {
 	Favorites      []string           `bson:"Favorites,omitempty"`
 	Cart           []string           `bson:"Cart,omitempty"`
 	OrdersBuy      []string           `bson:"OrdersBuy,omitempty"`
-}
-
-func main() {
-	opt := options.Client().ApplyURI("mongodb://localhost:27017")
-	client, err := mongo.NewClient(opt)
-	if err != nil {
-		panic(err)
-	}
-
-	ctx := context.TODO()
-
-	err = client.Connect(ctx)
-	if err != nil {
-		panic(err)
-	}
-
-	defer client.Disconnect(ctx)
-
-	ParcialWEBDB := client.Database("ParcialWEB")
-	ArticleCollection := ParcialWEBDB.Collection("Article")
-	Cart_ItemsCollection := ParcialWEBDB.Collection("Cart_Items")
-	Order := ParcialWEBDB.Collection("Order")
-	Users := ParcialWEBDB.Collection("Users")
-
-	defer ArticleCollection.Drop(ctx)
-	defer Cart_ItemsCollection.Drop(ctx)
-	defer Order.Drop(ctx)
-	defer Users.Drop(ctx)
-
 }
