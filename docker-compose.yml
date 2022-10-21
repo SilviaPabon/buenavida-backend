@@ -9,7 +9,7 @@ services:
       - '27017:27017'
     environment: 
         MONGO_INITDB_ROOT_USERNAME: root
-        MONGO_INITDB_ROOT_PASSWORD: rootpassword*/
+        MONGO_INITDB_ROOT_PASSWORD: superpassword2022
     volumes:
       - ./database:/data/db
   api:
