@@ -3,21 +3,25 @@ version: '3'
 services:
   mongo:
     image: mongo:5.0.13
-    container_name: buenavidaDatabase
+    container_name: mongo_database
     restart: always
     ports: 
       - '27017:27017'
     environment: 
-        MONGO_INITDB_ROOT_USERNAME: root
-        MONGO_INITDB_ROOT_PASSWORD: superpassword2022
+        MONGO_INITDB_ROOT_USERNAME: admin
+        MONGO_INITDB_ROOT_PASSWORD: admin
+        MONGO_INITDB_DATABASE: buenavida
     volumes:
       - ./database:/data/db
+  
   api:
     build: .
     restart: on-failure
     ports: 
       - '3030:3030'
-    container_name: buenavidaAPI
+    links: 
+      - mongo
+    container_name: golang_api
     depends_on:
       - mongo
     volumes:
