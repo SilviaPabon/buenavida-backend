@@ -1,0 +1,4 @@
+**/database/
+**/tmp/
+**/.git/
+**/.env
