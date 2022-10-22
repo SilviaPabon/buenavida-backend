@@ -26,7 +26,7 @@ const Product = new mongoose.Schema(
     image: { type: String },
     units: { type: String },
     price: { type: Number, min: 0.0, index: true },
-    disscount: { type: Number, min: 0.0, default: 0.0 },
+    discount: { type: Number, min: 0.0, default: 0.0 },
     annotations: { type: String },
     description: { type: String },
   },
