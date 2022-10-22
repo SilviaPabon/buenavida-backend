@@ -5,35 +5,34 @@ import (
 )
 
 type Article struct {
-	ID              primitive.ObjectID `bson:"_id,omitempty"`
-	Name            string             `bson:"Name,omitempty"`
-	Units           int32              `bson:"Units,omitempty"`
-	Brand           string             `bson:"Brand,omitempty"`
-	Unit_Value      int32              `bson:"Unit_Value,omitempty"`
-	DiscountCurrent int32              `bson:"DiscountCurrent,omitempty"`
-	Price           int32              `bson:"Price,omitempty"`
-	Description     string             `bson:"Description,omitempty"`
+	ID          primitive.ObjectID `bson:"_id,omitempty"`
+	Name        string             `bson:"name,omitempty"`
+	Units       string             `bson:"units,omitempty"`
+	Annotations string             `bson:"annotations,omitempty"`
+	Discount    float32            `bson:"discountCurrent,omitempty"`
+	Price       float32            `bson:"price,omitempty"`
+	Description string             `bson:"description,omitempty"`
 }
 
 type Cart_Items struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty"`
-	Quantity int32              `bson:"Quantity,omitempty"`
+	Quantity float32            `bson:"quantity,omitempty"`
 }
 
 type Order struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty"`
-	Order    []string           `bson:"Order,omitempty"`
-	Discount int32              `bson:"Discount,omitempty"`
-	Total    int32              `bson:"Total,omitempty"`
+	Order    []Cart_Items       `bson:"order,omitempty"`
+	Discount float32            `bson:"discount,omitempty"`
+	Total    float32            `bson:"total,omitempty"`
 }
 
 type Users struct {
-	ID             primitive.ObjectID `bson:"_id,omitempty"`
-	user_name      string             `bson:"user_name,omitempty"`
-	user_last_name string             `bson:"user_last_name,omitempty"`
-	password       string             `bson:"password,omitempty"`
-	Email          string             `bson:"Email,omitempty"`
-	Favorites      []string           `bson:"Favorites,omitempty"`
-	Cart           []string           `bson:"Cart,omitempty"`
-	OrdersBuy      []string           `bson:"OrdersBuy,omitempty"`
+	ID             primitive.ObjectID   `bson:"_id,omitempty"`
+	user_name      string               `bson:"user_name,omitempty"`
+	user_last_name string               `bson:"user_last_name,omitempty"`
+	password       string               `bson:"password,omitempty"`
+	Email          string               `bson:"email,omitempty"`
+	Favorites      []primitive.ObjectID `bson:"favorites,omitempty"`
+	Cart           []Cart_Items         `bson:"cart,omitempty"`
+	Purchases      []Order              `bson:"ordersBuy,omitempty"`
 }
