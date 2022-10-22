@@ -23,6 +23,7 @@ const products = JSON.parse(buffer);
 const Product = new mongoose.Schema(
   {
     name: { type: String, index: true },
+    image: { type: String },
     units: { type: String },
     price: { type: Number, min: 0.0, index: true },
     disscount: { type: Number, min: 0.0, default: 0.0 },
