@@ -7,6 +7,7 @@ import (
 type Article struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty"`
 	Name        string             `bson:"name,omitempty"`
+	Image       string             `bson:"image,omitempty"`
 	Units       string             `bson:"units,omitempty"`
 	Annotations string             `bson:"annotations,omitempty"`
 	Discount    float32            `bson:"discountCurrent,omitempty"`
