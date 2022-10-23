@@ -86,6 +86,16 @@ func HandleProductsSearch(c echo.Context) error {
     })
   }
 
+  // Search in database
+  _, dberr := models.SearchByText(payload.Criteria)
+
+  if dberr != nil {
+    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Unable to get response fron database",
+    })
+  }
+
   return c.JSON(http.StatusOK, interfaces.GenericResponse{
     Error: false, 
     Message: "POST received",
