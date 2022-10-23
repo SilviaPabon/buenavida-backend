@@ -9,13 +9,13 @@ import (
 
 type Article struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty", json:"id, omitempty"`
-	Name        string             `bson:"name,omitempty", json : "name"`
-	Image       string             `bson:"image,omitempty", json : "image"`
-	Units       string             `bson:"units,omitempty", json : "units"`
-	Annotations string             `bson:"annotations,omitempty", json : "annotations"`
-	Discount    float32            `bson:"discount,omitempty", json : "discount"`
-	Price       float32            `bson:"price,omitempty", json : "price"`
-	Description string             `bson:"description,omitempty", json : "description"`
+	Name        string             `bson:"name", json : "name"`
+	Image       string             `bson:"image", json : "image"`
+	Units       string             `bson:"units", json : "units"`
+	Annotations string             `bson:"annotations", json : "annotations"`
+	Discount    float32            `bson:"discount", json : "discount"`
+	Price       float32            `bson:"price", json : "price"`
+	Description string             `bson:"description", json : "description"`
 }
 
 type Cart_Items struct {

@@ -20,26 +20,16 @@ func GetProductsByPage(page int) (p []interfaces.Article, e error) {
   defer cancel()
 
   // Prepare query
-  options := new(options.FindOptions)
-  options.SetSkip(int64(page -1) * 5) // 5 is the limit
-  options.SetLimit(5)
+  options := options.Find().SetSkip(int64(page -1) * 5).SetLimit(5)
 
   // Make query
-  var results []bson.M
   var products []interfaces.Article
   cursor, _ := productsCollection.Find(ctx, bson.D{{}}, options)
 
-  // Convert to bson and struct
-  if err := cursor.All(ctx, &results); err != nil{
-    return products, err
-  }
-
   // Append to resuls array
-  for _, product := range results {
-    bsonBytes, _ := bson.Marshal(product)
-
-    var product interfaces.Article
-    bson.Unmarshal(bsonBytes, &product)
+  for cursor.Next(ctx){
+    product := interfaces.Article{}
+    _ = cursor.Decode(&product)
     products = append(products, product)
   }
 
