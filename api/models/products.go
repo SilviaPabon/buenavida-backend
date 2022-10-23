@@ -14,6 +14,28 @@ import(
 // Mongodb collection
 var productsCollection = configs.GetCollection("products")
 
+// GetAllProducts get entire products collection
+func GetAllProducts() (p []interfaces.Article, e error){
+  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  defer cancel()
+
+  // Make query
+  var products []interfaces.Article
+  cursor, err := productsCollection.Find(ctx, bson.D{{}})
+
+  if err != nil {
+    return products, nil
+  }
+
+  // Parse to struct annd return
+  if err = cursor.All(ctx, &products); err != nil {
+    return products, err
+  }
+
+  return products, nil
+
+}
+
 // GetProductsByPage get products by given page
 func GetProductsByPage(page int) (p []interfaces.Article, e error) {
   ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
@@ -30,7 +52,7 @@ func GetProductsByPage(page int) (p []interfaces.Article, e error) {
     return products, err
   }
 
-  // Parse from json to struct
+  // Parse from bson to struct
   if err = cursor.All(ctx, &products); err != nil{
     return products, err
   }

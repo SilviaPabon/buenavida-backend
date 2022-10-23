@@ -8,6 +8,26 @@ import(
   "github.com/SilviaPabon/buenavida-backend/models"
 )
 
+// HandleProductsGet
+func HandleProductsGet(c echo.Context) error {
+  // Get all products
+  products, err := models.GetAllProducts()
+
+  if err != nil {
+    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Unable to get products from database. Try again.",
+    })
+  }
+  
+  return c.JSON(http.StatusOK, interfaces.ProductsPage{
+    Error: false, 
+    Message: "OK", 
+    Products: products, 
+  })
+
+}
+
 // HandleProductsPagination get products by given page
 func HandleProductsPagination(c echo.Context) error {
   // Get page from params and convert to int
@@ -27,7 +47,7 @@ func HandleProductsPagination(c echo.Context) error {
   if err != nil{
     return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
       Error: true, 
-      Message: "Unable to get products from database",
+      Message: "Unable to get products from database. Try again.",
     })
   }
 
