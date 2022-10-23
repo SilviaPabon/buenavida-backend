@@ -4,6 +4,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// ### ### ###
+// Business logic interfaces
+
 type Article struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty", json:"id, omitempty"`
 	Name        string             `bson:"name,omitempty", json : "name"`
@@ -36,4 +39,12 @@ type Users struct {
 	Favorites      []primitive.ObjectID `bson:"favorites,omitempty", json : "favorites"`
 	Cart           []Cart_Items         `bson:"cart,omitempty", json : "cart"`
 	Purchases      []Order              `bson:"ordersBuy,omitempty", json : "ordersBuy"`
+}
+
+// ### ### ###
+// Helpers interfaces
+
+type GenericResponse struct{
+  Error 	bool		`json:"error"`
+  Message	string		`json:"message"`
 }
