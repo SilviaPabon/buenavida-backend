@@ -14,10 +14,10 @@ func HandleProductsPagination(c echo.Context) error {
   param := c.Param("page")
   page, err := strconv.Atoi(param)
 
-  if err != nil {
+  if page <= 0 || err != nil{
     return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
       Error: true, 
-      Message: "Page must be a numeric value",
+      Message: "Page must be a possitive integer (Starting from zero)",
     })
   }
 
