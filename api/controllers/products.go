@@ -20,7 +20,7 @@ func HandleProductsGet(c echo.Context) error {
     })
   }
   
-  return c.JSON(http.StatusOK, interfaces.ProductsPage{
+  return c.JSON(http.StatusOK, interfaces.GenericProductsArrayResponse{
     Error: false, 
     Message: "OK", 
     Products: products, 
@@ -58,7 +58,7 @@ func HandleProductsPagination(c echo.Context) error {
     })
   }
 
-  return c.JSON(http.StatusOK, interfaces.ProductsPage{
+  return c.JSON(http.StatusOK, interfaces.GenericProductsArrayResponse{
     Error: false, 
     Message: "OK", 
     Products: products, 
@@ -87,7 +87,7 @@ func HandleProductsSearch(c echo.Context) error {
   }
 
   // Search in database
-  _, dberr := models.SearchByText(payload.Criteria)
+  products, dberr := models.SearchByText(payload.Criteria)
 
   if dberr != nil {
     return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
@@ -96,8 +96,9 @@ func HandleProductsSearch(c echo.Context) error {
     })
   }
 
-  return c.JSON(http.StatusOK, interfaces.GenericResponse{
+  return c.JSON(http.StatusOK, interfaces.GenericProductsArrayResponse{
     Error: false, 
-    Message: "POST received",
+    Message: "OK", 
+    Products: products,
   })
 }
