@@ -20,13 +20,18 @@ func GetProductsByPage(page int) (p []interfaces.Article, e error) {
   defer cancel()
 
   // Prepare query
-  options := options.Find().SetSkip(int64(page -1) * 5).SetLimit(5)
+  options := options.Find().SetSkip(int64(page -1) * 12).SetLimit(12)
 
   // Make query
   var products []interfaces.Article
-  cursor, _ := productsCollection.Find(ctx, bson.D{{}}, options)
+  cursor, err := productsCollection.Find(ctx, bson.D{{}}, options)
 
-  if err := cursor.All(ctx, &products); err != nil{
+  if err != nil {
+    return products, err
+  }
+
+  // Parse from json to struct
+  if err = cursor.All(ctx, &products); err != nil{
     return products, err
   }
 
