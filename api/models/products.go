@@ -26,11 +26,8 @@ func GetProductsByPage(page int) (p []interfaces.Article, e error) {
   var products []interfaces.Article
   cursor, _ := productsCollection.Find(ctx, bson.D{{}}, options)
 
-  // Append to resuls array
-  for cursor.Next(ctx){
-    product := interfaces.Article{}
-    _ = cursor.Decode(&product)
-    products = append(products, product)
+  if err := cursor.All(ctx, &products); err != nil{
+    return products, err
   }
 
   return products, nil

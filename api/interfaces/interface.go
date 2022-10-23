@@ -9,25 +9,25 @@ import (
 
 type Article struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty", json:"id, omitempty"`
-	Name        string             `bson:"name", json : "name"`
-	Image       string             `bson:"image", json : "image"`
-	Units       string             `bson:"units", json : "units"`
-	Annotations string             `bson:"annotations", json : "annotations"`
-	Discount    float32            `bson:"discount", json : "discount"`
-	Price       float32            `bson:"price", json : "price"`
-	Description string             `bson:"description", json : "description"`
+	Name        string             `bson:"name", json:"name"`
+	Image       string             `bson:"image", json:"image"`
+	Units       string             `bson:"units", json:"units"`
+	Annotations string             `bson:"annotations", json:"annotations"`
+	Discount    float64            `bson:"discount", json:"discount"`
+	Price       float64            `bson:"price", json:"price"`
+	Description string             `bson:"description", json:"description"`
 }
 
 type Cart_Items struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty", json:"id, omitempty"`
-	Quantity float32            `bson:"quantity,omitempty", json : "quantity"`
+	Quantity int8            `bson:"quantity,omitempty", json : "quantity"`
 }
 
 type Order struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty", json:"id, omitempty"`
 	Order    []Cart_Items       `bson:"order,omitempty", json : "order"`
-	Discount float32            `bson:"discount,omitempty", json : "discount"`
-	Total    float32            `bson:"total,omitempty", json : "total"`
+	Discount float64            `bson:"discount,omitempty", json : "discount"`
+	Total    float64            `bson:"total,omitempty", json : "total"`
 }
 
 type Users struct {
