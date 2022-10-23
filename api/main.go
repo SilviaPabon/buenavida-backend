@@ -1,6 +1,8 @@
 package main
 
 import(
+  "fmt"
+  "os"
   "net/http"
   "github.com/labstack/echo/v4"
   "github.com/SilviaPabon/buenavida-backend/configs"
@@ -19,5 +21,14 @@ func main(){
     return c.String(http.StatusOK, "Pong!!")
   })
 
-  e.Logger.Fatal(e.Start(":3030"))
+  // ### ### ###
+  // Configure port
+
+  port := os.Getenv("PORT")
+
+  if port == "" {
+    port = "3030"
+  }
+
+  e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }
