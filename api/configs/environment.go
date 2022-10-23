@@ -14,6 +14,7 @@ func getMongoURI() string {
   host := os.Getenv("MONGO_HOST")
   port := os.Getenv("MONGO_PORT")
 
+  // Get environment variables from .env file
   if user == "" || password == "" || host == "" || port == "" {
     // Load environment variables from .env file
     err := godotenv.Load()
@@ -21,12 +22,11 @@ func getMongoURI() string {
     if err != nil {
       panic("🟥 Unable to load environment variables 🟥")
     }
-
+    
     user = os.Getenv("MONGO_USER")
     password = os.Getenv("MONGO_PASSWORD")
     host = os.Getenv("MONGO_HOST")
     port = os.Getenv("MONGO_PORT")
-
   }
   
   // Generate and return URI
