@@ -1,6 +1,8 @@
 package main
 
 import(
+  "fmt"
+  "os"
   "github.com/labstack/echo/v4"
   "github.com/labstack/echo/v4/middleware"
   "github.com/SilviaPabon/buenavida-backend/configs"
@@ -24,5 +26,14 @@ func main(){
   // Start routes
   routes.SetupProductsRoutes(e)
 
-  e.Logger.Fatal(e.Start(":3030"))
+  // ### ### ###
+  // Configure port
+
+  port := os.Getenv("PORT")
+
+  if port == "" {
+    port = "3030"
+  }
+
+  e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }
