@@ -32,9 +32,9 @@ func HandleProductsPagination(c echo.Context) error {
   }
 
   if len(products) == 0{
-    return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+    return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
       Error: true, 
-      Message: "Found empty page", 
+      Message: "Page wasn't found", 
     })
   }
 
