@@ -11,4 +11,6 @@ func SetupProductsRoutes(e *echo.Echo){
   e.GET("/products", controllers.HandleProductsGet)
   // Get products by page
   e.GET("/products/:page", controllers.HandleProductsPagination)
+  // Search product fron text
+  e.POST("/products/search", controllers.HandleProductsSearch)
 }

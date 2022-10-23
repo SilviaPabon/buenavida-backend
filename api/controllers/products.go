@@ -65,3 +65,29 @@ func HandleProductsPagination(c echo.Context) error {
   })
 
 }
+
+// HandleProductsSearch
+func HandleProductsSearch(c echo.Context) error {
+  // Get json payload
+  payload := new(interfaces.FilterProductsByText)
+
+  if err := c.Bind(payload); err != nil {
+    return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Unable to process query. Try again and make sure search-criteria field is provided",
+    })
+  }
+
+  // Validate field is not empty
+  if payload.Criteria == "" {
+    return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+      Error: true, 
+      Message: "search-criteria must be provided and can't be empty",
+    })
+  }
+
+  return c.JSON(http.StatusOK, interfaces.GenericResponse{
+    Error: false, 
+    Message: "POST received",
+  })
+}
