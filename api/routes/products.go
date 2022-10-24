@@ -8,7 +8,9 @@ import(
 // SetupProductsRoutes initialize user routes
 func SetupProductsRoutes(e *echo.Echo){
   // Get all products
-  e.GET("/products", controllers.HandleProductsGet)
+  e.GET("/api/products", controllers.HandleProductsGet)
   // Get products by page
-  e.GET("/products/:page", controllers.HandleProductsPagination)
+  e.GET("/api/products/:page", controllers.HandleProductsPagination)
+  // Search product fron text
+  e.POST("/api/products/search", controllers.HandleProductsSearch)
 }

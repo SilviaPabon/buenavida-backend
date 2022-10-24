@@ -1,10 +1,11 @@
 package models
 
 import(
-  // "fmt"
+  //"fmt"
   "context"
   "time"
   "go.mongodb.org/mongo-driver/bson"
+  "go.mongodb.org/mongo-driver/bson/primitive"
   //"go.mongodb.org/mongo-driver/mongo"
   "go.mongodb.org/mongo-driver/mongo/options"
   "github.com/SilviaPabon/buenavida-backend/configs"
@@ -57,5 +58,42 @@ func GetProductsByPage(page int) (p []interfaces.Article, e error) {
     return products, err
   }
 
+  return products, nil
+}
+
+// SearchByText filter product on database by provided text
+func SearchByText(criteria string) (p []interfaces.Article, e error) {
+  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  defer cancel()
+
+  // Prepare query
+
+  filter := bson.D{{
+    "$or", bson.A{
+      bson.D{{"name", primitive.Regex{
+	Pattern: criteria, 
+	Options: "gi",
+      }}},
+      bson.D{{"description", primitive.Regex{
+	Pattern: criteria, 
+	Options: "gi",
+      }}},
+    },
+  }}
+
+  var products []interfaces.Article
+
+  // Make query
+  cursor, err := productsCollection.Find(ctx, filter)
+
+  if err != nil {
+    return products, err
+  }
+
+  // Parse from bson to struct
+  if err = cursor.All(ctx, &products); err != nil {
+    return products, err
+  }
+  
   return products, nil
 }

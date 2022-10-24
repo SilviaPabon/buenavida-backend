@@ -20,7 +20,7 @@ func HandleProductsGet(c echo.Context) error {
     })
   }
   
-  return c.JSON(http.StatusOK, interfaces.ProductsPage{
+  return c.JSON(http.StatusOK, interfaces.GenericProductsArrayResponse{
     Error: false, 
     Message: "OK", 
     Products: products, 
@@ -58,10 +58,47 @@ func HandleProductsPagination(c echo.Context) error {
     })
   }
 
-  return c.JSON(http.StatusOK, interfaces.ProductsPage{
+  return c.JSON(http.StatusOK, interfaces.GenericProductsArrayResponse{
     Error: false, 
     Message: "OK", 
     Products: products, 
   })
 
+}
+
+// HandleProductsSearch
+func HandleProductsSearch(c echo.Context) error {
+  // Get json payload
+  payload := new(interfaces.FilterProductsByText)
+
+  if err := c.Bind(payload); err != nil {
+    return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Unable to process query. Try again and make sure search-criteria field is provided",
+    })
+  }
+
+  // Validate field is not empty
+  if payload.Criteria == "" {
+    return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+      Error: true, 
+      Message: "search-criteria must be provided and can't be empty",
+    })
+  }
+
+  // Search in database
+  products, dberr := models.SearchByText(payload.Criteria)
+
+  if dberr != nil {
+    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Unable to get response fron database",
+    })
+  }
+
+  return c.JSON(http.StatusOK, interfaces.GenericProductsArrayResponse{
+    Error: false, 
+    Message: "OK", 
+    Products: products,
+  })
 }
