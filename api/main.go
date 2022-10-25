@@ -11,8 +11,20 @@ import(
 
 func main(){
   // ### ### ###
-  // Create database connection
+  // Create mongo database connection
   configs.ConnectToMongo()
+ 
+  // Testing postgres connection (THIS SHOULD BE DELETED IN FUTURE)
+  db := configs.ConnectToPostgres()
+  pgPingErr := db.Ping()
+  
+  if pgPingErr != nil {
+    panic("🟥 Unable to ping postgres database 🟥")
+  }else{
+    fmt.Println("🐘 Connected to postgresSQL")
+  }
+
+  defer db.Close()
 
   // ### ### ###
   // Echo setup
