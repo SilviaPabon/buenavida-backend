@@ -105,6 +105,17 @@ func HandleProductsSearch(c echo.Context) error {
 
 // HandleProductImageRequest get product image fron given serial
 func HandleProductImageRequest(c echo.Context) error {
+  // Validate serial is a number
+  serialString := c.Param("serial")
+  _, err := strconv.Atoi(serialString)
+
+  if err != nil {
+    return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Provided serial is not valid. You must provide an positive number",
+    })
+  }
+
   return c.JSON(http.StatusOK, interfaces.GenericResponse{
     Error: false, 
     Message: "Wait",

@@ -97,3 +97,6 @@ func SearchByText(criteria string) (p []interfaces.Article, e error) {
   
   return products, nil
 }
+
+// GetProductImageFromSerial Obtain product image
+// func GetProductImageFromSerial(serial int) (res interfaces.ProductImageResponse, err error) {}
