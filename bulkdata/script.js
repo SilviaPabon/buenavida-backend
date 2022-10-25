@@ -10,14 +10,14 @@ const mgPassword = process.env.MONGO_PASSWORD;
 const mgHost = process.env.MONGO_HOST;
 const mgPort = process.env.MONGO_PORT;
 
-// Connect to mongo
-await mongoose.connect(
-  `mongodb://${mgUser}:${mgPassword}@${mgHost}:${mgPort}/buenavida?authSource=admin`,
-);
+// // Connect to mongo
+// await mongoose.connect(
+//   `mongodb://${mgUser}:${mgPassword}@${mgHost}:${mgPort}/buenavida?authSource=admin`,
+// );
 
 // Read json file
 const buffer = fs.readFileSync('./products.json');
-const products = JSON.parse(buffer);
+let products = JSON.parse(buffer);
 
 // Create mongo schemas and models
 const Product = new mongoose.Schema(
@@ -36,12 +36,31 @@ const Product = new mongoose.Schema(
 const ProductsModel = mongoose.model('products', Product);
 
 // Insert data
-try {
-  const res = await ProductsModel.insertMany(products);
-  console.log(`🟩 ${res.length} were added successfully 🟩`);
-} catch (err) {
-  console.log('🟥 Unable to insert data 🟥');
-  console.error(err);
-}
+const brands = [
+  'Natura Siberica',
+  'Beter',
+  'Weleda',
+  'Bio Cesta',
+  'Dr. Goerg',
+  'LOGONA',
+  'Alqvimia',
+  'Terra Verda',
+];
+
+products = products.map((product) => {
+  // Get random brand
+  const rand = Math.floor(Math.random() * brands.length);
+  return { ...product, brand: brands[rand] };
+});
+
+console.log(products);
+
+// try {
+//   const res = await ProductsModel.insertMany(products);
+//   console.log(`🟩 ${res.length} were added successfully 🟩`);
+// } catch (err) {
+//   console.log('🟥 Unable to insert data 🟥');
+//   console.error(err);
+// }
 
 process.exit();
