@@ -102,3 +102,11 @@ func HandleProductsSearch(c echo.Context) error {
     Products: products,
   })
 }
+
+// HandleProductImageRequest get product image fron given serial
+func HandleProductImageRequest(c echo.Context) error {
+  return c.JSON(http.StatusOK, interfaces.GenericResponse{
+    Error: false, 
+    Message: "Wait",
+  })
+}
