@@ -13,4 +13,6 @@ func SetupProductsRoutes(e *echo.Echo){
   e.GET("/api/products/:page", controllers.HandleProductsPagination)
   // Search product fron text
   e.POST("/api/products/search", controllers.HandleProductsSearch)
+  // Get product image
+  e.GET("/api/products/image/:serial", controllers.HandleProductImageRequest)
 }

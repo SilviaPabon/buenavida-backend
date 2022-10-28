@@ -19,6 +19,12 @@ type Article struct {
 	Description string             `bson:"description" json:"description"`
 }
 
+type ArticleImage struct {
+  ID		primitive.ObjectID	`bson:"_id, omitempty"`
+  Serial 	int 			`bson:"serial" json:"serial"`
+  Image		string			`bson:"image" json"image"`
+}
+
 type Cart_Items struct {
 	ID       primitive.ObjectID 	`bson:"_id,omitempty" json:"id, omitempty"`
 	Quantity int8            	`bson:"quantity" "json:"quantity"`

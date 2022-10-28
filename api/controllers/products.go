@@ -1,6 +1,7 @@
 package controllers
 
 import(
+  "fmt"
   "strconv"
   "net/http"
   "github.com/labstack/echo/v4"
@@ -100,5 +101,34 @@ func HandleProductsSearch(c echo.Context) error {
     Error: false, 
     Message: "OK", 
     Products: products,
+  })
+}
+
+// HandleProductImageRequest get product image fron given serial
+func HandleProductImageRequest(c echo.Context) error {
+  // Validate serial is a number
+  serialString := c.Param("serial")
+  serialNumber, err := strconv.Atoi(serialString)
+
+  if err != nil {
+    return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Provided serial is not valid. You must provide an positive number",
+    })
+  }
+
+  image, err := models.GetProductImageFromSerial(serialNumber)
+
+  if err != nil {
+    return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
+      Error: true, 
+      Message: fmt.Sprintf("No image was found for product with id %d", serialNumber),
+    })
+  }
+
+  return c.JSON(http.StatusOK, interfaces.ProductImageResponse{
+    Error: false, 
+    Message: "OK", 
+    Image: image.Image,
   })
 }
