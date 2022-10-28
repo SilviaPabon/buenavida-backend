@@ -1,7 +1,8 @@
 [
   {
+    "serial": 1,
     "name": "Aceite esencial de Clavo",
-    "image": "https://i.ibb.co/jGc94N2/1.jpg",
+    "image": "/products/image/1",
     "units": "12ML",
     "price": 7.99,
     "discount": 0,
@@ -9,8 +10,9 @@
     "description": "El aceite esencial de clavo es conocido por sus increíbles propiedades antimicrobianas, antimicóticas, antisépticas, antivirales, afrodisíacas y estimulantes. Perfecto para utilizar en tus mezclas de Cosmética Natural, añadiendo unas cuantas gotas en tu crema corporal o aceite vegetal, conseguirás nutrir y lucir una piel radiante y 100% cuidad."
   },
   {
+    "serial": 2,
     "name": "Parches de Oro de 24 kt Rejuvenecedores para Contorno de Ojos",
-    "image": "https://i.ibb.co/CWhvSTT/2.jpg",
+    "image": "/products/image/2",
     "units": "60UDS",
     "price": 15.5,
     "discount": 12,
@@ -18,17 +20,9 @@
     "description": "Parches de oro de 24 kt rejuvenecedores para contorno de ojos de Natura Siberica. Parches para ojos con efecto rejuvenecedor enriquecidos con oro de 24kt. Su acción descongestiona la piel, la suaviza y mejora su luminosidad."
   },
   {
-    "name": "Parches Iluminadores para el Contorno de Ojos",
-    "image": "https://i.ibb.co/pJMT9Qg/3.jpg",
-    "units": "60UDS",
-    "price": 15.5,
-    "discount": 0,
-    "annotations": "Sale a: 0,26 €/ud.",
-    "description": "Parches iluminadores para el contorno de ojos de Natura Siberica. 60 Parches para ojos con efecto iluminador que hidratan la piel del contorno, le devuelven la vitalidad y mejoran su protección para mantenerla joven. \n\nEstos parches iluminadores son una solución rápida y cómoda para darle a tus ojos ese toque de luz y vitalidad que el estrés y la vida urbana les van quitando. Con su base de biome con activo postbiótico único y extractos fermentados de mora de los pantanos norteña y frambuesa silvestre ayudan al microbioma de la piel a aumentar su resistencia y mejorar su luminosidad. La vitamina C presente en su fórmula mejora el tono y la textura del contorno para ayudar a recuperar su brillo natural, y la niacinamida contribuye a fortalecer la barrera de hidratación de la epidermis, dando lugar a un resultado suave, esplendoroso y rejuvenecido."
-  },
-  {
+    "serial": 3,
     "name": "Parches Supertonificantes para Contorno de Ojos",
-    "image": "https://i.ibb.co/tpstt40/4.jpg",
+    "image": "/products/image/3",
     "units": "60UDS",
     "price": 10.5,
     "discount": 22,
@@ -36,8 +30,9 @@
     "description": "Parches supertonificantes para contorno de ojos de Natura siberica. Parches para ojos con efecto tonificante que reducen visiblemente los signos de fatiga en la mirada y le aportan luz y vitalidad al instante. \n\nEstos parches supertonificantes son la solución definitiva para decir adiós a los signos de fatiga y la hinchazón en el contorno de los ojos. Basados en activo postbiótico único y extractos fermentados de mora de los pantanos norteña y frambuesa silvestre, crean sobre la mirada un efecto iluminador y energizante al instante. La cafeína presente en su fórmula ayuda a tensar las líneas finas y reducir la piel hinchada, mientras que la vitamina E genera un efecto regenerador que deja un aspecto descansado y revitalizado."
   },
   {
+    "serial": 4,
     "name": "6 Discos Desmaquillantes de Fibra Natural",
-    "image": "https://i.ibb.co/njRBVfS/5.jpg",
+    "image": "/products/image/4",
     "units": "6UDS",
     "price": 10.5,
     "discount": 25,
@@ -45,8 +40,9 @@
     "description": "Eliminan el maquillaje y limpian el rostro con suavidad. Elaborados en algodón y carbón de bambú. De doble cara y función: \n\nLimpieza diaria: elaborada en algodón ultrasuave es adecuada para productos líquidos. \n\nExfoliante: combinación de algodón y carbón de bambú, de propiedades purificantes y desintoxicantes. Indicada para texturas cremosas y densas. \n\nIncluye 6 discos y una práctica bolsita de algodón para lavarlos ( máx. 30 grados) y guardarlos. No secar en secadora. \n\nReúnen ahorro en otros productos de un solo uso (toallitas, discos de algodón) y máximo respeto por el medio ambiente."
   },
   {
+    "serial": 5,
     "name": "Aceite anticelulítico de abedul",
-    "image": "https://i.ibb.co/BBT38Dt/6.jpg",
+    "image": "/products/image/5",
     "units": "100ML",
     "price": 22.9,
     "discount": 0,
@@ -54,8 +50,9 @@
     "description": "El extracto de hojas de abedul contiene flavonoides y tanines, los cuales sirven para mantener y conservar el metabolismo y circulación de los líquidos en el cuerpo. Su función es dar firmeza, elasticidad y suavidad a la pel, previniendo y mejorando el estado de la misma. Por esta razón, previene y mejora la celulitis. No contiene ni sustancias químicas, ni colorantes, ni conservantes. Es apto para veganos y no está testado en animales."
   },
   {
+    "serial": 6,
     "name": "Aceite antiinflamatorio S.O.S Rescate",
-    "image": "https://i.ibb.co/k1KsWwB/7.jpg",
+    "image": "/products/image/6",
     "units": "30ML",
     "price": 12.45,
     "discount": 0,
@@ -63,8 +60,9 @@
     "description": "Pequeñas heridas, quemaduras, golpes, cicatrices… ¿Cuántos productos diferentes estás usando para paliar estos accidentes? Pues a partir de ahora con uno sólo podrás calmar y regenerar tu piel y la de toda tu familia con S. O. S. Rescate, una extraordinaria mezcla de aceites vegetales y esenciales procedentes de agricultura ecológica."
   },
   {
+    "serial": 7,
     "name": "Aceite Bucal de Coco Orgánico Premium",
-    "image": "https://i.ibb.co/1zSKZ17/8.jpg",
+    "image": "/products/image/7",
     "units": "180ML",
     "price": 9.6,
     "discount": 0,
@@ -72,8 +70,9 @@
     "description": "Oil Pulling de Dr. Goerg. El aceite bucal de coco orgánico premium de Dr. Goerg es fácil de usar y, gracias a sus ingredientes 100 % naturales enriquecidos con aceites esenciales de menta y eucalipto, garantiza una sensación en la boca limpia, agradable y fresca. Nuestro aceite bucal orgánico premium también es 100% vegano y está certificado como cosmético orgánico por Cosmos Organic . Si se usa regularmente antes de cepillarse los dientes, la extracción de aceite puede garantizar un aliento fresco y encías bien cuidadas a largo plazo. Al igual que con todos nuestros productos orgánicos premium, solo utilizamos las mejores materias primas de cultivos exclusivamente sostenibles para nuestro aceite de boca de coco orgánico premium."
   },
   {
+    "serial": 8,
     "name": "Aceite corporal blanco siberiano anticelulítico de Natura Siberica",
-    "image": "https://i.ibb.co/Kbvnhgz/9.jpg",
+    "image": "/products/image/8",
     "units": "200ML",
     "price": 6.95,
     "discount": 0,
@@ -81,8 +80,9 @@
     "description": "Este producto te trae lo mejor para el cuidado de tu cuerpo gracias a las propiedades de la cera blanca de abeja, los aceites naturales y la schizandra. Regálate lo mejor para tu piel y disfruta de esta combinación que hidratará de forma eficaz las zonas de tu cuerpo que más lo necesite."
   },
   {
+    "serial": 9,
     "name": "Aceite corporal Body Sculptor",
-    "image": "https://i.ibb.co/Yp7MdKV/10.jpg",
+    "image": "/products/image/9",
     "units": "",
     "price": 73.7,
     "discount": 0,
@@ -90,8 +90,9 @@
     "description": "Aceite corporal que moldea el cuerpo y esculpe la silueta de forma natural y eficaz. Previene el exceso de peso y la retención de líquidos gracias a su acción drenante, activa la microcirculación a la vez que tonifica la piel. Esculpe tu cuerpo realizando tratamientos de forma diaria. Está formulado con aceites vegetales naturales adecuado para pieles sensibles."
   },
   {
+    "serial": 10,
     "name": "Aceite corporal de almendras dulces",
-    "image": "https://i.ibb.co/hCpJzSG/11.jpg",
+    "image": "/products/image/10",
     "units": "500ML",
     "price": 10.45,
     "discount": 0,
@@ -99,8 +100,9 @@
     "description": "El Aceite de Almendras dulces es básico para una hidratación y nutrición de la piel. Puedes utilizarlo en todas las partes de tu cuerpo preferiblemente después de la ducha con la piel húmeda, para ayudar a su absorción llegando a las capas profundas de la piel. Un aceite neutro apto para todo tipo de pieles y edades, utilizándose para toda la familia desde las edades más tempranas. Es ideal como base para formularlo con otros aceites, aceites esenciales y lociones."
   },
   {
+    "serial": 11,
     "name": "Aceite corporal de almendras dulces con dosificador 1L",
-    "image": "https://i.ibb.co/HDqNk4v/12.jpg",
+    "image": "/products/image/11",
     "units": "1L",
     "price": 14.99,
     "discount": 15,
@@ -108,8 +110,9 @@
     "description": "El Aceite de Almendras dulces es básico para una hidratación y nutrición de la piel. Puedes utilizarlo en todas las partes de tu cuerpo preferiblemente después de la ducha con la piel húmeda, para ayudar a su absorción llegando a las capas profundas de la piel. Un aceite neutro apto para todo tipo de pieles y edades, utilizándose para toda la familia desde las edades más tempranas. Es ideal como base para formularlo con otros aceites, aceites esenciales y lociones."
   },
   {
+    "serial": 12,
     "name": "Aceite corporal de almendras dulces con dosificador 500ml",
-    "image": "https://i.ibb.co/rw2NHNV/13.jpg",
+    "image": "/products/image/12",
     "units": "500ML",
     "price": 11.55,
     "discount": 22,
@@ -117,8 +120,9 @@
     "description": "El Aceite de Almendras dulces es básico para una hidratación y nutrición de la piel. Puedes utilizarlo en todas las partes de tu cuerpo preferiblemente después de la ducha con la piel húmeda, para ayudar a su absorción llegando a las capas profundas de la piel. Un aceite neutro apto para todo tipo de pieles y edades, utilizándose para toda la familia desde las edades más tempranas. Es ideal como base para formularlo con otros aceites, aceites esenciales y lociones."
   },
   {
+    "serial": 13,
     "name": "Aceite Corporal de Granada",
-    "image": "https://i.ibb.co/5xtF5c6/14.jpg",
+    "image": "/products/image/13",
     "units": "100ML",
     "price": 22.9,
     "discount": 0,
@@ -126,8 +130,9 @@
     "description": "El aceite corporal de granada es de acción antioxidante intensiva que sirve para la regeneración celula, reafirmando y mejorando la elasticidad. Está indicado para pieles secas, maduras y estresadas, pues ayuda a prevenir el envejecimiento prematuro de la piel. Con ingredientes 100% naturales y ecológicos, que otorgan un aroma sensual y dulce. Testado dermatológicamente, no testado en animales. Apto para veganos."
   },
   {
+    "serial": 14,
     "name": "Aceite Corporal de Rosa Mosqueta",
-    "image": "https://i.ibb.co/7SsQ5XD/15.jpg",
+    "image": "/products/image/14",
     "units": "100ML",
     "price": 22.9,
     "discount": 0,
@@ -135,8 +140,9 @@
     "description": "La principal acción de la Rosa Mosqueta es la regeneración de la piel y elasticidad, aportando tonicidad a la piel. Combate los primeros signos de envejecimiento de la piel. Este producto combina la acción alisante de la rosa mosqueta con las propiedades hidratantes del aceite de jojoba. Da como resultado un aceite muy nutritivo, de una textura ligera y muy absorvente. Testado dermatológicamente en todo tipo de pieles, pero no en animales. Apto para veganos. De uso diario."
   },
   {
+    "serial": 15,
     "name": "Aceite corporal Embellecedor del Busto",
-    "image": "https://i.ibb.co/TLWH5xC/16.jpg",
+    "image": "/products/image/15",
     "units": "",
     "price": 81.7,
     "discount": 0,
@@ -144,8 +150,9 @@
     "description": "Aceite corporal empleado para moldear y realzar el busto dándole una apariencia de mayor volumen. Hidrata y nutre ayudando a prevenir las estrías de esta zona tan sensible. Utilízalo directamente con ligeros masajes circulares hasta su total absorción. Puedes utilizarlo de forma diaria, para mejores resultados te aconsejamos de dos a tres aplicaciones al día."
   },
   {
+    "serial": 16,
     "name": "Aceite corporal Reafirmante de Tejidos",
-    "image": "https://i.ibb.co/0rbCKtJ/17.jpg",
+    "image": "/products/image/16",
     "units": "",
     "price": 60.0,
     "discount": 0,
@@ -153,8 +160,9 @@
     "description": "Aceite corporal indispensable para prevenir la pérdida de firmeza de los tejidos y reafirmar las zonas que presentan flacidez. Puedes hidratar tu cuerpo de forma diaria con este aceite y beneficiarte de sus propiedades reafirmantes. Con ingredientes totalmente naturales consigue una hidratación en las capas profundas de la piel."
   },
   {
+    "serial": 17,
     "name": "Aceite corporal Reafirmante del Busto",
-    "image": "https://i.ibb.co/T8kvXW0/18.jpg",
+    "image": "/products/image/17",
     "units": "",
     "price": 81.7,
     "discount": 0,
@@ -162,8 +170,9 @@
     "description": "Aceite corporal específico de tratamiento que reafirma eficazmente el seno caído a la vez que hidrata y suaviza la piel devolviéndole su belleza. El tratamiento natural con este aceite realza el busto para que se muestre más bello. Este aceite está libre de hormonas y otros componentes químicos, se basa en ingredientes naturales con propiedades hidratantes y estimuladoras."
   },
   {
+    "serial": 18,
     "name": "Aceite corporal Reina de Egipto",
-    "image": "https://i.ibb.co/371H2ps/19.jpg",
+    "image": "/products/image/18",
     "units": "",
     "price": 57.3,
     "discount": 0,
@@ -171,8 +180,9 @@
     "description": "Aceite corporal de exótica fragancia que nutre en profundidad, combate el envejecimiento cutáneo, regenera y alisa, a la vez que aporta autoestima y confianza. Este aceite es muy usado y recomendado entre nuestros clientes gracias a su versatilidad y eficacia."
   },
   {
+    "serial": 19,
     "name": "Aceite daúrico corporal de Natura Siberica",
-    "image": "https://i.ibb.co/8X7dyTz/20.jpg",
+    "image": "/products/image/19",
     "units": "",
     "price": 18.95,
     "discount": 8,
@@ -180,8 +190,9 @@
     "description": "Relaja tu cuerpo con este fantástico producto con el que podrás disfrutar de momentos únicos. Aceite daúrico corporal es perfecto para pieles secas. Una explosión de sensaciones gracias a su composición que revitalizará tu piel."
   },
   {
+    "serial": 20,
     "name": "Aceite de Aguacate corporal",
-    "image": "https://i.ibb.co/1sQt3m5/21.jpg",
+    "image": "/products/image/20",
     "units": "125ML",
     "price": 15.0,
     "discount": 0,
@@ -189,8 +200,9 @@
     "description": "El aceite de aguacate actúa un bálsamo perfecto para la piel. Destaca por su efecto nutritivo, protector y regenerante. Indicado para pieles secas, agrietadas y envejecidas. Tiene una excelente penetración y además ayuda a filtrar de forma natural la radiación solar."
   },
   {
+    "serial": 21,
     "name": "Aceite de almendras corporal Bio",
-    "image": "https://i.ibb.co/8mZrQFJ/22.jpg",
+    "image": "/products/image/21",
     "units": "125ML",
     "price": 14.95,
     "discount": 0,
@@ -198,8 +210,9 @@
     "description": "Hidrata y nutre tu piel con este aceite de almendras ecológico de primera prensada en frío. Te recomendamos su uso después de la ducha con la piel húmeda, mejora su absorción. Puedes utilizarlo de base para formularlo con otro aceites, aceites esenciales y lociones."
   },
   {
+    "serial": 22,
     "name": "Aceite de Argán Bio",
-    "image": "https://i.ibb.co/F5x21Rt/23.jpg",
+    "image": "/products/image/22",
     "units": "30ML",
     "price": 12.99,
     "discount": 0,
@@ -207,8 +220,9 @@
     "description": "Este aceite vegetal rico en vitaminas y antioxidantes te hará lucir una piel radiante. El aceite de argán te aportará la luminosidad y elasticidad que necesitas para presumir de belleza natural. Ideal para todo tipo de pieles y capaz de nutrir las capas profundas de la piel."
   },
   {
+    "serial": 23,
     "name": "Aceite de Argán Bio",
-    "image": "https://i.ibb.co/wwyTpZD/24.jpg",
+    "image": "/products/image/23",
     "units": "100ML",
     "price": 25.95,
     "discount": 0,
@@ -216,12 +230,23 @@
     "description": "Este aceite vegetal rico en vitaminas y antioxidantes te hará lucir una piel radiante. El aceite de argán te aportará la luminosidad y elasticidad que necesitas para presumir de belleza natural. Ideal para todo tipo de pieles y capaz de nutrir las capas profundas de la piel."
   },
   {
+    "serial": 24,
     "name": "Aceite de CBD 5%",
-    "image": "https://i.ibb.co/nkbpjtS/25.jpg",
+    "image": "/products/image/24",
     "units": "15ML",
     "price": 20.95,
     "discount": 10,
     "annotations": "Sale a: 20,95 €/ud.",
     "description": "Aceite de semillas de cáñamo con CBD al 5%. Adecuado para el uso diario en personas con dolor crónico o de intensidad alta. El aceite de cáñamo con CBD de Terra Verda es orgánico, vegano y libre de crueldad animal. Su exclusivo método de extracción permite mantener todas las propiedades de la semilla de cáñamo sin trazos de tóxicos ni alcoholes. Puedes usarlo diariamente para aliviar las dolencias articulares o musculares por el dolor crónico, días estresantes o la actividad deportiva."
+  },
+  {
+    "serial": 25,
+    "name": "Parches Iluminadores para el Contorno de Ojos",
+    "image": "/products/image/25",
+    "units": "60UDS",
+    "price": 15.5,
+    "discount": 0,
+    "annotations": "Sale a: 0,26 €/ud.",
+    "description": "Parches iluminadores para el contorno de ojos de Natura Siberica. 60 Parches para ojos con efecto iluminador que hidratan la piel del contorno, le devuelven la vitalidad y mejoran su protección para mantenerla joven. \n\nEstos parches iluminadores son una solución rápida y cómoda para darle a tus ojos ese toque de luz y vitalidad que el estrés y la vida urbana les van quitando. Con su base de biome con activo postbiótico único y extractos fermentados de mora de los pantanos norteña y frambuesa silvestre ayudan al microbioma de la piel a aumentar su resistencia y mejorar su luminosidad. La vitamina C presente en su fórmula mejora el tono y la textura del contorno para ayudar a recuperar su brillo natural, y la niacinamida contribuye a fortalecer la barrera de hidratación de la epidermis, dando lugar a un resultado suave, esplendoroso y rejuvenecido."
   }
 ]

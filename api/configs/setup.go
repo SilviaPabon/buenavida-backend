@@ -6,9 +6,11 @@ import(
   "time"
   "go.mongodb.org/mongo-driver/mongo"
   "go.mongodb.org/mongo-driver/mongo/options"
+  "database/sql"
+  _ "github.com/lib/pq"
 )
 
-
+// ### ### ### MONGO ### ### ###
 // ConnectToMongo Establish a mongo connection (not instance)
 func ConnectToMongo() *mongo.Client{
   // Create client
@@ -38,11 +40,23 @@ func ConnectToMongo() *mongo.Client{
   return client
 }
 
-// Create instance
-var mongoInstance *mongo.Client = ConnectToMongo()
-
 // GetCollection get specific collection (table) from mongo client
 func GetCollection(collection string) *mongo.Collection{
   col := mongoInstance.Database("buenavida").Collection(collection)
   return col
 }
+
+// ### ### ### Postgres ### ### ###\
+// ConnectToPostgres creates a postgres connecion
+func ConnectToPostgres() *sql.DB {
+  db, err := sql.Open("postgres", getPostgresURI())
+
+  if err != nil {
+    panic("🟥 Unable to create postgres connection 🟥")
+  }
+
+  return db
+}
+
+// Create instances
+var mongoInstance *mongo.Client = ConnectToMongo()

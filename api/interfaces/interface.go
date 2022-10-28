@@ -9,6 +9,7 @@ import (
 
 type Article struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id, omitempty"`
+	Serial	    int		       `bson:"serial" json:"serial"`
 	Name        string             `bson:"name" json:"name"`
 	Image       string             `bson:"image" json:"image"`
 	Units       string             `bson:"units" json:"units"`
