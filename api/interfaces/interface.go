@@ -9,6 +9,7 @@ import (
 
 type Article struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id, omitempty"`
+	Serial	    int		       `bson:"serial" json:"serial"`
 	Name        string             `bson:"name" json:"name"`
 	Image       string             `bson:"image" json:"image"`
 	Units       string             `bson:"units" json:"units"`
@@ -16,6 +17,12 @@ type Article struct {
 	Discount    float64            `bson:"discount" json:"discount"`
 	Price       float64            `bson:"price" json:"price"`
 	Description string             `bson:"description" json:"description"`
+}
+
+type ArticleImage struct {
+  ID		primitive.ObjectID	`bson:"_id, omitempty"`
+  Serial 	int 			`bson:"serial" json:"serial"`
+  Image		string			`bson:"image" json"image"`
 }
 
 type Cart_Items struct {

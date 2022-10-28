@@ -1,4 +1,5 @@
-**/database/
+**/_mongo
+**/_postgres
 **/tmp/
 **/.git/
 **/.env

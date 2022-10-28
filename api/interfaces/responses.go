@@ -11,3 +11,9 @@ type GenericProductResponse struct {
 	Message string  `json:"message"`
 	Product Article `json:"product"`
 }
+
+type ProductImageResponse struct{
+  Error 	bool		`json:"error"`
+  Message	string 		`json:"message"`
+  Image		string		`json:"image"`
+}

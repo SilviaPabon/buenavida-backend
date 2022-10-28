@@ -1,15 +1,13 @@
 package controllers
 
-import (
-	"fmt"
-	"net/http"
-	"strconv"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
-	"github.com/SilviaPabon/buenavida-backend/interfaces"
-	"github.com/SilviaPabon/buenavida-backend/models"
-	"github.com/labstack/echo/v4"
+import(
+  "fmt"
+  "strconv"
+  "net/http"
+  "github.com/labstack/echo/v4"
+  "github.com/SilviaPabon/buenavida-backend/interfaces"
+  "go.mongodb.org/mongo-driver/bson/primitive"
+  "github.com/SilviaPabon/buenavida-backend/models"
 )
 
 // HandleProductsGet
@@ -135,4 +133,33 @@ func GetFromID(c echo.Context) error {
 		Message: "OK",
 		Product: product,
 	})
+}
+
+// HandleProductImageRequest get product image fron given serial
+func HandleProductImageRequest(c echo.Context) error {
+  // Validate serial is a number
+  serialString := c.Param("serial")
+  serialNumber, err := strconv.Atoi(serialString)
+
+  if err != nil {
+    return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Provided serial is not valid. You must provide an positive number",
+    })
+  }
+
+  image, err := models.GetProductImageFromSerial(serialNumber)
+
+  if err != nil {
+    return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
+      Error: true, 
+      Message: fmt.Sprintf("No image was found for product with id %d", serialNumber),
+    })
+  }
+
+  return c.JSON(http.StatusOK, interfaces.ProductImageResponse{
+    Error: false, 
+    Message: "OK", 
+    Image: image.Image,
+  })
 }

@@ -16,6 +16,7 @@ import (
 
 // Mongodb collection
 var productsCollection = configs.GetCollection("products")
+var imagesCollection = configs.GetCollection("images")
 
 // GetAllProducts get entire products collection
 func GetAllProducts() (p []interfaces.Article, e error) {
@@ -119,4 +120,19 @@ func GetDetailsFromID(id string) (p interfaces.Article, e error) {
 	}
 
 	return product, err
+}
+
+// GetProductImageFromSerial Obtain product image
+func GetProductImageFromSerial(serial int) (res interfaces.ArticleImage, err error) {
+  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  defer cancel()
+  
+  var image interfaces.ArticleImage
+  err = imagesCollection.FindOne(ctx, bson.D{{"serial", serial}}).Decode(&image)
+
+  if err != nil {
+    return image, err
+  }
+
+  return image, nil
 }
