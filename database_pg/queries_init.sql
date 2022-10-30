@@ -10,7 +10,6 @@ CREATE DATABASE buenavida
     CONNECTION LIMIT = -1
     IS_TEMPLATE = False;
 
--- This command must be placed manually
 \c buenavida;
 
 -- DROP TABLE IF EXISTS users;
@@ -45,8 +44,8 @@ CREATE TABLE IF NOT EXISTS orders
 CREATE TABLE IF NOT EXISTS "shoppingCart"
 (
     "idUser" INTEGER NOT NULL,
-    "idArticle" INTEGER NOT NULL,
-    amount INTEGER NOT NULL
+    "idArticle" VARCHAR ( 100 ) NOT NULL,
+    amount INTEGER NOT NULL,
 	CONSTRAINT fk_shoppingCart_users
 		FOREIGN KEY ("idUser")
 			REFERENCES users (id)
@@ -59,7 +58,7 @@ CREATE TABLE IF NOT EXISTS "shoppingCart"
 CREATE TABLE IF NOT EXISTS favorites
 (
     "idUser" INTEGER NOT NULL,
-    "idArticles" INTEGER NOT NULL
+    "idArticle" VARCHAR ( 100 ) NOT NULL,
 	CONSTRAINT fk_favorites_users
 		FOREIGN KEY ("idUser")
 			REFERENCES users (id)
