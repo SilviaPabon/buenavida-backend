@@ -1,15 +1,14 @@
 package models
 
-import(
+import (
   //"fmt"
   "context"
   "time"
   "go.mongodb.org/mongo-driver/bson"
   "go.mongodb.org/mongo-driver/bson/primitive"
-  //"go.mongodb.org/mongo-driver/mongo"
-  "go.mongodb.org/mongo-driver/mongo/options"
   "github.com/SilviaPabon/buenavida-backend/configs"
   "github.com/SilviaPabon/buenavida-backend/interfaces"
+  "go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Mongodb collection
@@ -17,8 +16,8 @@ var productsCollection = configs.GetCollection("products")
 var imagesCollection = configs.GetCollection("images")
 
 // GetAllProducts get entire products collection
-func GetAllProducts() (p []interfaces.Article, e error){
-  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+func GetAllProducts() (p []interfaces.Article, e error) {
+  ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
   defer cancel()
 
   // Make query
@@ -26,37 +25,36 @@ func GetAllProducts() (p []interfaces.Article, e error){
   cursor, err := productsCollection.Find(ctx, bson.D{{}})
 
   if err != nil {
-    return products, nil
+	  return products, nil
   }
 
   // Parse to struct annd return
   if err = cursor.All(ctx, &products); err != nil {
-    return products, err
+	  return products, err
   }
 
   return products, nil
-
 }
 
 // GetProductsByPage get products by given page
 func GetProductsByPage(page int) (p []interfaces.Article, e error) {
-  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
   defer cancel()
 
   // Prepare query
-  options := options.Find().SetSkip(int64(page -1) * 12).SetLimit(12)
+  options := options.Find().SetSkip(int64(page-1) * 12).SetLimit(12)
 
   // Make query
   var products []interfaces.Article
   cursor, err := productsCollection.Find(ctx, bson.D{{}}, options)
 
   if err != nil {
-    return products, err
+	  return products, err
   }
 
   // Parse from bson to struct
-  if err = cursor.All(ctx, &products); err != nil{
-    return products, err
+  if err = cursor.All(ctx, &products); err != nil {
+	  return products, err
   }
 
   return products, nil
@@ -64,7 +62,7 @@ func GetProductsByPage(page int) (p []interfaces.Article, e error) {
 
 // SearchByText filter product on database by provided text
 func SearchByText(criteria string) (p []interfaces.Article, e error) {
-  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
   defer cancel()
 
   // Prepare query
@@ -72,11 +70,11 @@ func SearchByText(criteria string) (p []interfaces.Article, e error) {
   filter := bson.D{{
     "$or", bson.A{
       bson.D{{"name", primitive.Regex{
-	Pattern: criteria, 
+	Pattern: criteria,
 	Options: "gi",
       }}},
       bson.D{{"description", primitive.Regex{
-	Pattern: criteria, 
+	Pattern: criteria,
 	Options: "gi",
       }}},
     },
@@ -95,8 +93,29 @@ func SearchByText(criteria string) (p []interfaces.Article, e error) {
   if err = cursor.All(ctx, &products); err != nil {
     return products, err
   }
-  
+
   return products, nil
+}
+
+func GetDetailsFromID(id string) (p interfaces.Article, e error) {
+  //Search in database
+  ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+  defer cancel()
+
+  mongoId, err := primitive.ObjectIDFromHex(id)
+
+  if err != nil {
+    return interfaces.Article{}, err
+  }
+
+  var product interfaces.Article
+  err = productsCollection.FindOne(ctx, bson.D{{"_id", mongoId}}).Decode(&product)
+
+  if err != nil {
+    return interfaces.Article{}, err
+  }
+
+  return product, err
 }
 
 // GetProductImageFromSerial Obtain product image

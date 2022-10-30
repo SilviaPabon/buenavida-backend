@@ -1,11 +1,12 @@
 package routes
 
-import(
-  "github.com/labstack/echo/v4"
+import (
   "github.com/SilviaPabon/buenavida-backend/controllers"
+  "github.com/labstack/echo/v4"
 )
 
 // SetupProductsRoutes initialize user routes
+
 func SetupProductsRoutes(e *echo.Echo){
   // Get all products
   e.GET("/api/products", controllers.HandleProductsGet)
@@ -15,4 +16,6 @@ func SetupProductsRoutes(e *echo.Echo){
   e.POST("/api/products/search", controllers.HandleProductsSearch)
   // Get product image
   e.GET("/api/products/image/:serial", controllers.HandleProductImageRequest)
+  //Get details product
+  e.GET("/api/product/:id", controllers.GetFromID)
 }

@@ -6,6 +6,7 @@ import(
   "net/http"
   "github.com/labstack/echo/v4"
   "github.com/SilviaPabon/buenavida-backend/interfaces"
+  "go.mongodb.org/mongo-driver/bson/primitive"
   "github.com/SilviaPabon/buenavida-backend/models"
 )
 
@@ -16,15 +17,15 @@ func HandleProductsGet(c echo.Context) error {
 
   if err != nil {
     return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
-      Error: true, 
+      Error:   true,
       Message: "Unable to get products from database. Try again.",
     })
   }
-  
+
   return c.JSON(http.StatusOK, interfaces.GenericProductsArrayResponse{
-    Error: false, 
-    Message: "OK", 
-    Products: products, 
+    Error:    false,
+    Message:  "OK",
+    Products: products,
   })
 
 }
@@ -34,10 +35,11 @@ func HandleProductsPagination(c echo.Context) error {
   // Get page from params and convert to int
   param := c.Param("page")
   page, err := strconv.Atoi(param)
+  println(param)
 
-  if page <= 0 || err != nil{
+  if page <= 0 || err != nil {
     return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
-      Error: true, 
+      Error:   true,
       Message: "Page must be a possitive integer (Starting from zero)",
     })
   }
@@ -45,24 +47,24 @@ func HandleProductsPagination(c echo.Context) error {
   // Get products by given page
   products, err := models.GetProductsByPage(page)
 
-  if err != nil{
+  if err != nil {
     return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
-      Error: true, 
+      Error:   true,
       Message: "Unable to get products from database. Try again.",
     })
   }
 
-  if len(products) == 0{
+  if len(products) == 0 {
     return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
-      Error: true, 
-      Message: "Page wasn't found", 
+      Error:   true,
+      Message: "Page wasn't found",
     })
   }
 
   return c.JSON(http.StatusOK, interfaces.GenericProductsArrayResponse{
-    Error: false, 
-    Message: "OK", 
-    Products: products, 
+    Error:    false,
+    Message:  "OK",
+    Products: products,
   })
 
 }
@@ -74,7 +76,7 @@ func HandleProductsSearch(c echo.Context) error {
 
   if err := c.Bind(payload); err != nil {
     return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
-      Error: true, 
+      Error:   true,
       Message: "Unable to process query. Try again and make sure search-criteria field is provided",
     })
   }
@@ -82,7 +84,7 @@ func HandleProductsSearch(c echo.Context) error {
   // Validate field is not empty
   if payload.Criteria == "" {
     return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
-      Error: true, 
+      Error:   true,
       Message: "search-criteria must be provided and can't be empty",
     })
   }
@@ -92,15 +94,44 @@ func HandleProductsSearch(c echo.Context) error {
 
   if dberr != nil {
     return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
-      Error: true, 
+      Error:   true,
       Message: "Unable to get response fron database",
     })
   }
 
   return c.JSON(http.StatusOK, interfaces.GenericProductsArrayResponse{
-    Error: false, 
-    Message: "OK", 
+    Error:    false,
+    Message:  "OK",
     Products: products,
+  })
+}
+
+func GetFromID(c echo.Context) error {
+  //param id
+  id := c.Param("id")
+
+  product, err := models.GetDetailsFromID(id)
+  fmt.Println(err)
+
+  if err != nil {
+    switch err {
+    case primitive.ErrInvalidHex:
+      return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+	Error:   true,
+	Message: "Provided object id is not valid",
+      })
+    default:
+      return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
+	Error:   true,
+	Message: "Unable to get products from database. Try again.",
+      })
+    }
+  }
+
+  return c.JSON(http.StatusOK, interfaces.GenericProductResponse{
+    Error:   false,
+    Message: "OK",
+    Product: product,
   })
 }
 
