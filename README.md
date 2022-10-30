@@ -9,9 +9,13 @@ MONGO_USER=youruser
 MONGO_PASSWORD=yourpassword
 MONGO_HOST=yourhost
 MONGO_PORT=yourport
+PG_USER=youruser
+PG_PASSWORD=yourpassword
+PG_HOST=yourhost
+PG_PORT=yourport
 ```
 
-If you want to use the provided docker-compose file as development environment, your `MONGO_USER` and `MONGO_PASSWORD` are both `admin`.
+If you want to use the provided docker-compose file as development environment, your `MONGO_USER`, `MONGO_PASSWORD`, `PG_USER` and `PG_PASSWORD` are all `admin`.
 
 ## Build docker images
 
@@ -33,10 +37,37 @@ Run docker-compose file
 docker-compose up
 ```
 
-You should see some MongoDB logging messages on your `docker-compose` console and some message similar to: 
+You should see the following messages on `buenavida-api` docker console: 
 
 ```
 🟩 Connected to mongo 🟩
 ```
 
-Otherwise, you should see an error message. 
+```
+🐘 Connected to postgresSQL
+```
+
+The **first time** you start the docker-compose file, you probably will see a postgres connection error on `buenavida-api` docker console. Follow this steps to fix it:
+
+1. Create an interactive shell into postgres container: 
+
+```
+docker exec -it $(docker ps --filter NAME=pg_database --format "{{.ID}}") /bin/bash
+```
+
+2. Move to files folder:
+
+```
+cd files
+```
+
+3. Execute init.sql script: 
+
+```
+psql -U admin -a -f ./init.sql
+```
+
+4. Finally, restart the docker-compose (`Ctrol + C`, `docker-compose up`).
+
+
+
