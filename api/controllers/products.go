@@ -11,6 +11,7 @@ import(
 )
 
 var modelsGetAllProducts = models.GetAllProducts
+var modelsGetProductsByPage = models.GetProductsByPage
 
 // HandleProductsGet
 func HandleProductsGet(c echo.Context) error {
@@ -46,7 +47,7 @@ func HandleProductsPagination(c echo.Context) error {
   }
 
   // Get products by given page
-  products, err := models.GetProductsByPage(page)
+  products, err := modelsGetProductsByPage(page)
 
   if err != nil {
     return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
