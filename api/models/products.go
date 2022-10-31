@@ -25,12 +25,12 @@ func GetAllProducts() (p []interfaces.Article, e error) {
   cursor, err := productsCollection.Find(ctx, bson.D{{}})
 
   if err != nil {
-	  return products, nil
+    return products, nil
   }
 
   // Parse to struct annd return
   if err = cursor.All(ctx, &products); err != nil {
-	  return products, err
+    return products, err
   }
 
   return products, nil
