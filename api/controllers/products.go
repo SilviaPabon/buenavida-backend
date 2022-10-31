@@ -37,7 +37,6 @@ func HandleProductsPagination(c echo.Context) error {
   // Get page from params and convert to int
   param := c.Param("page")
   page, err := strconv.Atoi(param)
-  println(param)
 
   if page <= 0 || err != nil {
     return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{

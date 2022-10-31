@@ -13,13 +13,13 @@ import(
 )
 
 // Helper function to create the context and recorder
-func setup(method, path string) (echo.Context, *httptest.ResponseRecorder) {
+func setup(method, path string) (echo.Context, *httptest.ResponseRecorder, *http.Request) {
   e := echo.New()
   r := httptest.NewRequest(method, path, nil)
   w := httptest.NewRecorder()
   context := e.NewContext(r, w)
 
-  return context, w
+  return context, w, r
 }
 
 // Test /api/producst success
@@ -27,7 +27,7 @@ func TestGetProductsSuccess(t *testing.T){
   c := require.New(t)
 
   // Create request
-  context, w := setup(http.MethodGet, "/api/products")
+  context, w, _ := setup(http.MethodGet, "/api/products")
 
   // Make request
   err := HandleProductsGet(context)
@@ -44,7 +44,7 @@ func TestGetProductsSuccess(t *testing.T){
   // Validate response
   c.Equal(reply.Error, false)
 
-  c.GreaterOrEqualf(len(reply.Products), 25, fmt.Sprintf("Got: %d videos --> At least 25 videos are required", len(reply.Products)))
+  c.GreaterOrEqualf(len(reply.Products), 25, fmt.Sprintf("Got: %d products --> At least 25 products are required", len(reply.Products)))
 }
 
 // Test /api/products failed
@@ -62,7 +62,7 @@ func TestGetProductsInternalServerError(t *testing.T) {
   }
 
   // Create request
-  context, w := setup(http.MethodGet, "/api/products")
+  context, w, _ := setup(http.MethodGet, "/api/products")
 
   // Make request
   err := HandleProductsGet(context)
@@ -80,4 +80,23 @@ func TestGetProductsInternalServerError(t *testing.T) {
 }
 
 // Test /api/products/1 success
+func TestProductsPaginationSuccess(t *testing.T){
+  c := require.New(t)
 
+  context, w, _ := setup(http.MethodGet, "/api/products")
+  context.SetParamNames("page")
+  context.SetParamValues("1")
+
+  err := HandleProductsPagination(context)
+  c.NoError(err)
+
+  // Validate custom request responses
+  c.Equal(http.StatusOK, w.Code)
+  
+  var reply interfaces.GenericProductsArrayResponse
+  err =  json.Unmarshal(w.Body.Bytes(), &reply)
+  c.NoError(err)
+
+  c.Equal(reply.Error, false)
+  c.Equalf(len(reply.Products), 12, fmt.Sprintf("Got: %d products --> Expected pagination was 12 items", len(reply.Products)))
+}
