@@ -15,15 +15,9 @@ PG_HOST=yourhost
 PG_PORT=yourport
 ```
 
-If you want to use the provided docker-compose file as development environment, your `MONGO_USER`, `MONGO_PASSWORD`, `PG_USER` and `PG_PASSWORD` are all `admin`.
+If you want to use the provided docker-compose file as development environment, your `MONGO_USER`, `MONGO_PASSWORD`, `PG_USER` and `PG_PASSWORD` are all `admin` and both hosts are `localhost`.
 
 ## Build docker images
-
-Create api / golang image
-
-```
-docker build -t buenavida/api .
-```
 
 Build docker-compose file
 
@@ -69,5 +63,22 @@ psql -U admin -a -f ./init.sql
 
 4. Finally, restart the docker-compose (`Ctrol + C`, `docker-compose up`).
 
+## Start development server
+
+1. Install air package: 
+
+Read [here](https://github.com/cosmtrek/air) for more information or troubleshooting.
+
+```
+go install github.com/cosmtrek/air@latest
+```
+
+2. Run listen script: 
 
 
+From /api folder:
+
+```
+./listen.sh
+
+```
