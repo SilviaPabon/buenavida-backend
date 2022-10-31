@@ -34,7 +34,7 @@ func TestGetProductsSuccess(t *testing.T){
   c.NoError(err)
 
   // Validate status code
-  c.Equalf(w.Code, http.StatusOK, fmt.Sprintf("Expected %d status code but got %d", http.StatusOK, w.Code))
+  c.Equalf(http.StatusOK, w.Code, fmt.Sprintf("Expected %d status code but got %d", http.StatusOK, w.Code))
 
   // Convert response to struct
   var reply interfaces.GenericProductsArrayResponse
@@ -42,7 +42,7 @@ func TestGetProductsSuccess(t *testing.T){
   c.NoError(err)
 
   // Validate response
-  c.Equalf(reply.Error, false, fmt.Sprintf("Expected custom error on JSON to be false but got %t", reply.Error))
+  c.Equalf(false, reply.Error, fmt.Sprintf("Expected custom error on JSON to be false but got %t", reply.Error))
 
   c.GreaterOrEqualf(len(reply.Products), 25, fmt.Sprintf("Got: %d products --> At least 25 products are required", len(reply.Products)))
 }
@@ -69,14 +69,14 @@ func TestGetProductsInternalServerError(t *testing.T) {
   c.NoError(err)
 
   // Validate status code
-  c.Equalf(w.Code, http.StatusInternalServerError, fmt.Sprintf("Expected %d status code but got %d", http.StatusInternalServerError, w.Code))
+  c.Equalf(http.StatusInternalServerError, w.Code, fmt.Sprintf("Expected %d status code but got %d", http.StatusInternalServerError, w.Code))
  
   // Validate body (Just the error boolean because there are not products)
   var reply interfaces.GenericProductsArrayResponse
   err = json.Unmarshal(w.Body.Bytes(), &reply)
   c.NoError(err)
 
-  c.Equalf(reply.Error, true, fmt.Sprintf("Expected custom error on JSON to be true but got %t", reply.Error))
+  c.Equalf(true, reply.Error, fmt.Sprintf("Expected custom error on JSON to be true but got %t", reply.Error))
 }
 
 // Test /api/products/:id success
@@ -97,8 +97,8 @@ func TestProductsPaginationSuccess(t *testing.T){
   err = json.Unmarshal(w.Body.Bytes(), &reply)
   c.NoError(err)
 
-  c.Equal(reply.Error, false)
-  c.Equalf(len(reply.Products), 12, fmt.Sprintf("Got: %d products --> Expected pagination was 12 items", len(reply.Products)))
+  c.Equal(false, reply.Error)
+  c.Equalf(12, len(reply.Products), fmt.Sprintf("Got: %d products --> Expected pagination was 12 items", len(reply.Products)))
 }
 
 // Test /api/products/:id Not found
@@ -119,7 +119,7 @@ func TestProductsPaginationNotFound(t *testing.T){
   err = json.Unmarshal(w.Body.Bytes(), &reply)
   c.NoError(err)
 
-  c.Equalf(reply.Error, true, fmt.Sprintf("Expected custom error on JSON to be true but got %t", reply.Error))
+  c.Equalf(true, reply.Error, fmt.Sprintf("Expected custom error on JSON to be true but got %t", reply.Error))
 }
 
 // Test /api/products/:id Bad Request
@@ -150,7 +150,7 @@ func TestProductsPaginationBadRequest(t *testing.T){
   err = json.Unmarshal(w.Body.Bytes(), &reply)
   c.NoError(err)
 
-  c.Equalf(reply.Error, true, fmt.Sprintf("Expected custom error on JSON to be true but got %t", reply.Error))
+  c.Equalf(true, reply.Error, fmt.Sprintf("Expected custom error on JSON to be true but got %t", reply.Error))
 }
 
 // Test /api/products/:id Internal server error
