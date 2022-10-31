@@ -1,51 +1,52 @@
 package main
 
-import(
-  "fmt"
-  "os"
-  "github.com/labstack/echo/v4"
-  "github.com/labstack/echo/v4/middleware"
-  "github.com/SilviaPabon/buenavida-backend/configs"
-  "github.com/SilviaPabon/buenavida-backend/routes"
+import (
+	"fmt"
+	"github.com/SilviaPabon/buenavida-backend/configs"
+	"github.com/SilviaPabon/buenavida-backend/routes"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"os"
 )
 
-func main(){
-  // ### ### ###
-  // Create mongo database connection
-  configs.ConnectToMongo()
- 
-  // Testing postgres connection (THIS SHOULD BE DELETED IN FUTURE)
-  db := configs.ConnectToPostgres()
-  pgPingErr := db.Ping()
-  
-  if pgPingErr != nil {
-    panic("🟥 Unable to ping postgres database 🟥")
-  }else{
-    fmt.Println("🐘 Connected to postgresSQL")
-  }
+func main() {
+	// ### ### ###
+	// Create mongo database connection
+	configs.ConnectToMongo()
 
-  defer db.Close()
+	// Testing postgres connection (THIS SHOULD BE DELETED IN FUTURE)
+	db := configs.ConnectToPostgres()
+	pgPingErr := db.Ping()
 
-  // ### ### ###
-  // Echo setup
-  e := echo.New()
+	if pgPingErr != nil {
+		panic("🟥 Unable to ping postgres database 🟥")
+	} else {
+		fmt.Println("🐘 Connected to postgresSQL")
+	}
 
-  e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-      AllowOrigins: []string{"*"},
-      AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
-  }))
+	defer db.Close()
 
-  // Start routes
-  routes.SetupProductsRoutes(e)
+	// ### ### ###
+	// Echo setup
+	e := echo.New()
 
-  // ### ### ###
-  // Configure port
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 
-  port := os.Getenv("PORT")
+	// Start routes
+	routes.SetupProductsRoutes(e)
+	routes.SetupUserRoutes(e)
 
-  if port == "" {
-    port = "3030"
-  }
+	// ### ### ###
+	// Configure port
 
-  e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = "3030"
+	}
+
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }
