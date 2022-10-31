@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"regexp"
 
 	"github.com/SilviaPabon/buenavida-backend/interfaces"
 	"github.com/SilviaPabon/buenavida-backend/models"
@@ -30,9 +31,24 @@ func HandleUserPost(c echo.Context) (err error) {
 		})
 	}
 
+	re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+
+	if !re.MatchString(payload.Email) {
+		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+			Error:   true,
+			Message: "This string is not a mail",
+		})
+	}
+
+	if !models.FindByEmail(payload.Email) {
+		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+			Error:   true,
+			Message: "This mail already exists",
+		})
+	}
+
 	// Sanitize and save on database
 	user := interfaces.Users{
-		//id: primitive.NewObjectID(),
 		Firstname: payload.Firstname,
 		Lastname:  payload.Lastname,
 		Email:     payload.Email,
@@ -47,6 +63,8 @@ func HandleUserPost(c echo.Context) (err error) {
 			Message: "Unable to save user on database",
 		})
 	}
+	//for test
+	//log.Println(user, "user")
 
 	return c.JSON(http.StatusOK, interfaces.GenericResponse{
 		Error:   false,

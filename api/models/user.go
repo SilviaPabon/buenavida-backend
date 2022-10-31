@@ -18,18 +18,43 @@ func SaveUser(u *interfaces.Users) (r bool) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	/* _, err := usersCollection.InsertOne(ctx, u)
-
-	   if err != nil{
-	     return false
-	   } */
-
 	query := `INSERT INTO users (name, lastname, mail, password)
               VALUES ($1, $2, $3, $4);
             `
 	row := conn.QueryRowContext(
 		ctx, query, u.Firstname, u.Lastname, u.Email, u.Password,
 	)
-	log.Println(row)
+
+	if row.Err() != nil {
+		log.Fatal(row.Err())
+	}
+
+	return true
+}
+
+// FindByEmail search an user by mail
+func FindByEmail(email string) (succ bool) {
+
+	// Search on database
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	query := `SELECT COUNT(*) AS count FROM users
+    		WHERE UPPER(users.mail) = UPPER($1);`
+
+	row := conn.QueryRowContext(
+		ctx, query, email,
+	)
+	//this checks if a email already exists
+	var check int
+	err := row.Scan(&check)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if check == 1 {
+		return false
+	}
+
 	return true
 }
