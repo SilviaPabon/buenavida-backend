@@ -10,10 +10,12 @@ import(
   "github.com/SilviaPabon/buenavida-backend/models"
 )
 
+var modelsGetAllProducts = models.GetAllProducts
+
 // HandleProductsGet
 func HandleProductsGet(c echo.Context) error {
   // Get all products
-  products, err := models.GetAllProducts()
+  products, err := modelsGetAllProducts()
 
   if err != nil {
     return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
