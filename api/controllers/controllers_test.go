@@ -12,15 +12,22 @@ import(
   "github.com/SilviaPabon/buenavida-backend/interfaces"
 )
 
+// Helper function to create the context and recorder
+func setup(method, path string) (echo.Context, *httptest.ResponseRecorder) {
+  e := echo.New()
+  r := httptest.NewRequest(method, path, nil)
+  w := httptest.NewRecorder()
+  context := e.NewContext(r, w)
+
+  return context, w
+}
+
 // Test /api/producst success
 func TestGetProductsSuccess(t *testing.T){
   c := require.New(t)
 
   // Create request
-  e := echo.New()
-  r := httptest.NewRequest(http.MethodGet, "/api/products", nil)
-  w := httptest.NewRecorder()
-  context := e.NewContext(r, w)
+  context, w := setup(http.MethodGet, "/api/products")
 
   // Make request
   err := HandleProductsGet(context)
@@ -55,10 +62,7 @@ func TestGetProductsInternalServerError(t *testing.T) {
   }
 
   // Create request
-  e := echo.New()
-  r := httptest.NewRequest(http.MethodGet, "/api/products", nil)
-  w := httptest.NewRecorder()
-  context := e.NewContext(r, w)
+  context, w := setup(http.MethodGet, "/api/products")
 
   // Make request
   err := HandleProductsGet(context)
@@ -74,3 +78,6 @@ func TestGetProductsInternalServerError(t *testing.T) {
 
   c.Equal(reply.Error, true)
 }
+
+// Test /api/products/1 success
+
