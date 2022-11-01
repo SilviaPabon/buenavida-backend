@@ -10,10 +10,13 @@ import(
   "github.com/SilviaPabon/buenavida-backend/models"
 )
 
+var modelsGetAllProducts = models.GetAllProducts
+var modelsGetProductsByPage = models.GetProductsByPage
+
 // HandleProductsGet
 func HandleProductsGet(c echo.Context) error {
   // Get all products
-  products, err := models.GetAllProducts()
+  products, err := modelsGetAllProducts()
 
   if err != nil {
     return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
@@ -35,7 +38,6 @@ func HandleProductsPagination(c echo.Context) error {
   // Get page from params and convert to int
   param := c.Param("page")
   page, err := strconv.Atoi(param)
-  println(param)
 
   if page <= 0 || err != nil {
     return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
@@ -45,7 +47,7 @@ func HandleProductsPagination(c echo.Context) error {
   }
 
   // Get products by given page
-  products, err := models.GetProductsByPage(page)
+  products, err := modelsGetProductsByPage(page)
 
   if err != nil {
     return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{

@@ -30,18 +30,18 @@ services:
       # first time
       - ./database:/files 
   
-  api:
-    build: .
-    restart: on-failure
-    ports: 
-      - '3030:3030'
-    links: 
-      - mongo
-      - pg
-    container_name: golang_api
-    depends_on:
-      - mongo
-      - pg
-    volumes:
-      - ./api/:/usr/src/buenavida/api
-    command: air
+  # api:
+  #   build: .
+  #   restart: on-failure
+  #   ports: 
+  #     - '3030:3030'
+  #   links: 
+  #     - mongo
+  #     - pg
+  #   container_name: golang_api
+  #   depends_on:
+  #     - mongo
+  #     - pg
+  #   volumes:
+  #     - ./api/:/usr/src/buenavida/api
+  #   command: air
