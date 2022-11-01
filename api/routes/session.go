@@ -7,5 +7,5 @@ import(
 
 // SetupSessionRoutes create and manage session routes
 func SetupSessionRoutes(e *echo.Echo){
-  e.POST("/api/login", controllers.HandleLogin)
+  e.POST("/api/session/login", controllers.HandleLogin)
 }

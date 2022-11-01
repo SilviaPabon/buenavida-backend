@@ -2,6 +2,7 @@ package controllers
 
 import(
   "fmt"
+  "time"
   "net/http"
   "github.com/labstack/echo/v4"
   "github.com/SilviaPabon/buenavida-backend/interfaces"
@@ -40,6 +41,7 @@ func HandleLogin(c echo.Context) error {
   }
 
   // fmt.Printf("%+v\n", user)
+  // *** Create tokens ***
   accessToken, ATerr := utils.CreateJWTAccessToken(&user)
   refreshToken, RTerr := utils.CreateJWTRefreshToken(&user)
 
@@ -50,11 +52,32 @@ func HandleLogin(c echo.Context) error {
     })
   }
 
-  fmt.Println(accessToken)
-  fmt.Println(refreshToken)
+  // fmt.Println(accessToken)
+  // fmt.Println(refreshToken)
+
+  // *** Send tokens on cookies ***
+  // *** Prepare cookies ***
+  accessCookie := new(http.Cookie)
+  accessCookie.Name = "access-token"
+  accessCookie.Value = accessToken
+  // This should be equal to the one in utils.go file
+  accessCookie.Expires = time.Now().Add(2*time.Hour)
+  accessCookie.HttpOnly = true
+  accessCookie.Path = "/" // Valid for all paths
+
+  refreshCookie := new(http.Cookie)
+  refreshCookie.Name = "refresh-token"
+  refreshCookie.Value = refreshToken
+  refreshCookie.Expires = time.Now().Add(12*time.Hour)
+  refreshCookie.HttpOnly = true
+  refreshCookie.Path = "/session/refresh"
+
+  // *** Send cookies on response ***
+  c.SetCookie(accessCookie)
+  c.SetCookie(refreshCookie)
 
   return c.JSON(http.StatusOK, interfaces.GenericResponse{
     Error: false, 
-    Message: "Hello world",
+    Message: "User authenticated successfully",
   })
 }
