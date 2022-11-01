@@ -6,6 +6,7 @@ import(
   "github.com/labstack/echo/v4"
   "github.com/SilviaPabon/buenavida-backend/interfaces"
   "github.com/SilviaPabon/buenavida-backend/models"
+  "github.com/SilviaPabon/buenavida-backend/utils"
 )
 
 func HandleLogin(c echo.Context) error {
@@ -38,7 +39,19 @@ func HandleLogin(c echo.Context) error {
     })
   }
 
-  fmt.Printf("%+v\n", user)
+  // fmt.Printf("%+v\n", user)
+  accessToken, ATerr := utils.CreateJWTAccessToken(&user)
+  refreshToken, RTerr := utils.CreateJWTRefreshToken(&user)
+
+  if ATerr != nil || RTerr != nil {
+    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Unable to initialize authentication",
+    })
+  }
+
+  fmt.Println(accessToken)
+  fmt.Println(refreshToken)
 
   return c.JSON(http.StatusOK, interfaces.GenericResponse{
     Error: false, 

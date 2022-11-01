@@ -2,6 +2,7 @@ package interfaces
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/golang-jwt/jwt/v4"	
 )
 
 // ### ### ###
@@ -51,4 +52,10 @@ type User struct {
 type GenericResponse struct {
 	Error   bool   `json:"error"`
 	Message string `json:"message"`
+}
+
+type JWTCustomClaims struct {
+  jwt.RegisteredClaims // Default claims
+  ID		int		`json:"id"`
+  Email		string		`json:"email"`
 }

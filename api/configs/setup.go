@@ -2,6 +2,7 @@ package configs
 
 import(
   // "fmt"
+  "os"
   "context"
   "time"
   "go.mongodb.org/mongo-driver/mongo"
@@ -55,6 +56,13 @@ func ConnectToPostgres() *sql.DB {
   }
 
   return db
+}
+
+// ### ### ### Jwt ### ### ###
+// GetJWTSecret get secret from environment
+func GetJWTSecret() []byte {
+  secret := os.Getenv("JWT_KEY")
+  return []byte(secret)
 }
 
 // Create instances
