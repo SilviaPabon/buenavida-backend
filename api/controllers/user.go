@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 	"regexp"
-
+	"log"
 	"github.com/SilviaPabon/buenavida-backend/interfaces"
 	"github.com/SilviaPabon/buenavida-backend/models"
 	"github.com/labstack/echo/v4"
@@ -12,7 +12,7 @@ import (
 
 // HandleUserPost create a new user
 func HandleUserPost(c echo.Context) (err error) {
-	// Get json palyload
+	// Get json payload
 	payload := new(interfaces.Users)
 
 	if err = c.Bind(payload); err != nil {
@@ -40,22 +40,16 @@ func HandleUserPost(c echo.Context) (err error) {
 		})
 	}
 
-	if !models.FindByEmail(payload.Email) {
+	if models.FindByEmail(payload.Email) {
 		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
 			Error:   true,
 			Message: "This mail already exists",
 		})
 	}
 
-	// Sanitize and save on database
-	user := interfaces.Users{
-		Firstname: payload.Firstname,
-		Lastname:  payload.Lastname,
-		Email:     payload.Email,
-		Password:  string(pass),
-	}
+	payload.Password = string(pass)
 
-	succ := models.SaveUser(&user)
+	succ := models.SaveUser(payload)
 
 	if !succ {
 		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{

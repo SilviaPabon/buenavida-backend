@@ -53,8 +53,8 @@ func FindByEmail(email string) (succ bool) {
 	}
 
 	if check == 1 {
-		return false
+		return true
 	}
 
-	return true
+	return false
 }
