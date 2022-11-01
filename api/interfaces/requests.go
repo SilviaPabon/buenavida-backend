@@ -5,6 +5,6 @@ type FilterProductsByText struct{
 }
 
 type LoginPayload struct{
-  Mail		string 		`json:"mail"`
+  Mail		string 		`json:"email"`
   Password	string		`json:"password"`
 }

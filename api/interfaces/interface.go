@@ -37,8 +37,8 @@ type Order struct {
 	Total    float64            `bson:"total" json:"total"`
 }
 
-type Users struct {
-	ID        primitive.ObjectID `json:"id, omitempty"`
+type User struct {
+	ID        int		     `json:"id, omitempty"`
 	Firstname string             `json:"firstname" validate:"required,min=1,max=125"`
 	Lastname  string             `json:"lastname" validate:"required,min=1,max=125"`
 	Password  string             `json:"password" validate:"required,min=8,max=250,containsany=!@#?*,containsany=1234567890,containsany=ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"`

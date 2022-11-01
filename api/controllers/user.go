@@ -12,7 +12,7 @@ import (
 // HandleUserPost create a new user
 func HandleUserPost(c echo.Context) (err error) {
 	// Get json payload
-	payload := new(interfaces.Users)
+	payload := new(interfaces.User)
 
 	v := validator.New()
 
