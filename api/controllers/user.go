@@ -2,12 +2,11 @@ package controllers
 
 import (
 	"net/http"
-
-	"github.com/SilviaPabon/buenavida-backend/interfaces"
-	"github.com/SilviaPabon/buenavida-backend/models"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/SilviaPabon/buenavida-backend/interfaces"
+	"github.com/SilviaPabon/buenavida-backend/models"
+	"github.com/SilviaPabon/buenavida-backend/utils"
 )
 
 // HandleUserPost create a new user
@@ -39,7 +38,7 @@ func HandleUserPost(c echo.Context) (err error) {
 		})
 	}
 
-	pass, err := bcrypt.GenerateFromPassword([]byte(payload.Password), bcrypt.DefaultCost)
+	pass, err := utils.HashPassword([]byte(payload.Password))
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{

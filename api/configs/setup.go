@@ -1,7 +1,7 @@
 package configs
 
 import(
-  "fmt"
+  // "fmt"
   "context"
   "time"
   "go.mongodb.org/mongo-driver/mongo"
@@ -36,7 +36,6 @@ func ConnectToMongo() *mongo.Client{
     panic("🟥 Unable to get response from dababase 🟥")
   }
 
-  fmt.Println("🟩 Connected to mongo 🟩")
   return client
 }
 
