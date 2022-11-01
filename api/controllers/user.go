@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"net/http"
-	"regexp"
 
 	"github.com/SilviaPabon/buenavida-backend/interfaces"
 	"github.com/SilviaPabon/buenavida-backend/models"
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -14,6 +14,8 @@ import (
 func HandleUserPost(c echo.Context) (err error) {
 	// Get json payload
 	payload := new(interfaces.Users)
+
+	v := validator.New()
 
 	if err = c.Bind(payload); err != nil {
 		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
@@ -29,21 +31,20 @@ func HandleUserPost(c echo.Context) (err error) {
 		})
 	}
 
+	err_v := v.Struct(payload)
+	if err_v != nil {
+		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+			Error:   true,
+			Message: err_v.Error(),
+		})
+	}
+
 	pass, err := bcrypt.GenerateFromPassword([]byte(payload.Password), bcrypt.DefaultCost)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
 			Error:   true,
 			Message: "Unable to encrypt the password",
-		})
-	}
-
-	re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-
-	if !re.MatchString(payload.Email) {
-		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
-			Error:   true,
-			Message: "This string is not a mail",
 		})
 	}
 
