@@ -39,13 +39,10 @@ type Order struct {
 
 type Users struct {
 	ID        primitive.ObjectID `json:"id, omitempty"`
-	Firstname string             `json:"user_name"`
-	Lastname  string             `json:"user_last_name"`
+	Firstname string             `json:"firstname"`
+	Lastname  string             `json:"lastname"`
 	Password  string             `json:"password"`
 	Email     string             `json:"email"`
-	//Favorites []primitive.ObjectID `json:"favorites"`
-	//Cart      []Cart_Items         `json:"cart"`
-	//Purchases []Order              `json:"ordersBuy"`
 }
 
 // ### ### ###

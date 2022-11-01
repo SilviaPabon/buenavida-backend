@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 	"regexp"
-	"log"
+
 	"github.com/SilviaPabon/buenavida-backend/interfaces"
 	"github.com/SilviaPabon/buenavida-backend/models"
 	"github.com/labstack/echo/v4"
@@ -19,6 +19,13 @@ func HandleUserPost(c echo.Context) (err error) {
 		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
 			Error:   true,
 			Message: "Unable to parse user payload",
+		})
+	}
+
+	if c.Bind(payload) == nil {
+		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+			Error:   true,
+			Message: "JSON wasn't provided",
 		})
 	}
 
