@@ -9,7 +9,7 @@ import (
 
 type Article struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id, omitempty"`
-	Serial	    int		       `bson:"serial" json:"serial"`
+	Serial      int                `bson:"serial" json:"serial"`
 	Name        string             `bson:"name" json:"name"`
 	Image       string             `bson:"image" json:"image"`
 	Units       string             `bson:"units" json:"units"`
@@ -20,14 +20,14 @@ type Article struct {
 }
 
 type ArticleImage struct {
-  ID		primitive.ObjectID	`bson:"_id, omitempty"`
-  Serial 	int 			`bson:"serial" json:"serial"`
-  Image		string			`bson:"image" json"image"`
+	ID     primitive.ObjectID `bson:"_id, omitempty"`
+	Serial int                `bson:"serial" json:"serial"`
+	Image  string             `bson:"image" json"image"`
 }
 
 type Cart_Items struct {
-	ID       primitive.ObjectID 	`bson:"_id,omitempty" json:"id, omitempty"`
-	Quantity int8            	`bson:"quantity" "json:"quantity"`
+	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id, omitempty"`
+	Quantity int8               `bson:"quantity" "json:"quantity"`
 }
 
 type Order struct {
@@ -38,20 +38,17 @@ type Order struct {
 }
 
 type Users struct {
-	ID             primitive.ObjectID   `bson:"_id,omitempty" json:"id, omitempty"`
-	user_name      string               `bson:"user_name" json:"user_name"`
-	user_last_name string               `bson:"user_last_name" json:"user_last_name"`
-	password       string               `bson:"password" json:"password"`
-	Email          string               `bson:"email" json:"email"`
-	Favorites      []primitive.ObjectID `bson:"favorites" json:"favorites"`
-	Cart           []Cart_Items         `bson:"cart" json:"cart"`
-	Purchases      []Order              `bson:"ordersBuy" json:"ordersBuy"`
+	ID        primitive.ObjectID `json:"id, omitempty"`
+	Firstname string             `json:"firstname" validate:"required,min=1,max=125"`
+	Lastname  string             `json:"lastname" validate:"required,min=1,max=125"`
+	Password  string             `json:"password" validate:"required,min=8,max=250,containsany=!@#?*,containsany=1234567890,containsany=ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"`
+	Email     string             `json:"email" validate:"required,max=250,email"`
 }
 
 // ### ### ###
 // Helpers interfaces
 
-type GenericResponse struct{
-  Error 	bool		`json:"error"`
-  Message	string		`json:"message"`
+type GenericResponse struct {
+	Error   bool   `json:"error"`
+	Message string `json:"message"`
 }
