@@ -1,9 +1,12 @@
 package middlewares
 
 import(
-  "fmt"
+  // "fmt"
+  // "time"
   "net/http"
   "github.com/labstack/echo/v4"
+  "github.com/golang-jwt/jwt/v4"
+  "github.com/SilviaPabon/buenavida-backend/configs"
   "github.com/SilviaPabon/buenavida-backend/interfaces"
 )
 
@@ -20,6 +23,22 @@ func MustProvideAccessToken(next echo.HandlerFunc) echo.HandlerFunc {
       })
     }
 
+    claims := &interfaces.JWTCustomClaims{}
+    signedString := cookie.Value
+
+    // This also validates the token expiration
+    _, err = jwt.ParseWithClaims(signedString, claims, func(t *jwt.Token) (interface {}, error){
+      return configs.GetJWTSecret(), nil
+    })
+    
+    if err != nil {
+      return c.JSON(http.StatusUnauthorized, interfaces.GenericResponse{
+	Error: true, 
+	Message: "Access token is not valid",
+      })
+    }
+
+    // Go to the handler if all is valid
     return next(c)
   }
 } 
