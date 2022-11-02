@@ -1,12 +1,14 @@
 package configs
 
 import(
-  // "fmt"
+  "fmt"
   "os"
   "context"
+  "strconv"
   "time"
   "go.mongodb.org/mongo-driver/mongo"
   "go.mongodb.org/mongo-driver/mongo/options"
+  "github.com/go-redis/redis/v9"
   "database/sql"
   _ "github.com/lib/pq"
 )
@@ -46,7 +48,7 @@ func GetCollection(collection string) *mongo.Collection{
   return col
 }
 
-// ### ### ### Postgres ### ### ###\
+// ### ### ### Postgres ### ### ###
 // ConnectToPostgres creates a postgres connecion
 func ConnectToPostgres() *sql.DB {
   db, err := sql.Open("postgres", getPostgresURI())
@@ -56,6 +58,28 @@ func ConnectToPostgres() *sql.DB {
   }
 
   return db
+}
+
+// ### ### ### Redis ### ### ###
+// ConnectToRedis creates a redis connection
+func ConnectToRedis() *redis.Client {
+  database, err := strconv.Atoi(os.Getenv("REDIS_DATABASE"))
+
+  if err != nil {
+    panic("🟥 Unable to parse redis database 🟥")
+  }
+
+  client := redis.NewClient(&redis.Options{
+    Addr: fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT")),
+    Password: os.Getenv("REDIS_PASSWORD"),
+    DB: database,
+  })
+
+  if _, err := client.Ping(context.Background()).Result(); err != nil {
+    panic(err)
+  }
+
+  return client
 }
 
 // ### ### ### Jwt ### ### ###

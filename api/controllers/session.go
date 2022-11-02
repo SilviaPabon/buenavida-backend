@@ -71,6 +71,16 @@ func HandleLogin(c echo.Context) error {
     })
   }
 
+  // *** Save token on redis *** ***
+  err = models.SaveRefreshTokenOnRedis(refreshToken, user.Email)
+
+  if err != nil {
+    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Unable to cache refresh token",
+    })
+  }
+
   // fmt.Println(accessToken)
   // fmt.Println(refreshToken)
 
