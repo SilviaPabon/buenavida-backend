@@ -9,6 +9,7 @@ import(
 
 var redis = configs.ConnectToRedis() 
 
+// SaveRefreshTokenOnRedis save or replace the user refresh-token on the "white list"
 func SaveRefreshTokenOnRedis(refreshToken, owner string) error {
   ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
   defer cancel()
