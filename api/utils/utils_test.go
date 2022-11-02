@@ -10,6 +10,19 @@ import(
   "github.com/SilviaPabon/buenavida-backend/interfaces"
 )
 
+// getTestUser helper function to create an example user
+func getTestUser() interfaces.User {
+  user := interfaces.User{
+    ID: 1, 
+    Firstname: "Foo", 
+    Lastname: "Bar", 
+    Email: "foo@bar.com", 
+    Password: "secret",
+  }
+
+  return user
+}
+
 // TestHashPasswordSuccess 
 func TestHashPasswordSuccess(t *testing.T){
   c := require.New(t)
@@ -55,13 +68,7 @@ func TestCreateAccessTokenSuccess(t *testing.T){
   c := require.New(t)
 
   // Create a testing user (interface)
-  user := interfaces.User{
-    ID: 1, 
-    Firstname: "Foo", 
-    Lastname: "Bar", 
-    Email: "foo@bar.com", 
-    Password: "secret",
-  }
+  user := getTestUser()
 
   // Test function
   signedString, _, err := CreateJWTAccessToken(&user)
@@ -80,6 +87,29 @@ func TestCreateAccessTokenSuccess(t *testing.T){
   c.Equalf(user.Email, claims.Email, fmt.Sprintf("Expected token Email to be: %s but got: %s", user.Email, claims.Email))
   c.Equalf(user.Email, claims.RegisteredClaims.Subject, fmt.Sprintf("Expected %s to be token subject but found %s", user.Email, claims.RegisteredClaims.Subject))
 
+}
+
+// TestCreateRefreshTokenSuccess
+func TestCreateRefreshTokenSuccess(t *testing.T){
+  c := require.New(t)
+  user := getTestUser()
+
+  // Test function
+  signedString, _, err := CreateJWTRefreshToken(&user)
+  c.NoError(err)
+  c.NotEqualf(signedString, "", fmt.Sprintf("Expected signed string not to be empty"))
+
+  // Get token claims
+  claims := &interfaces.JWTCustomClaims{}
+
+  _, err = jwt.ParseWithClaims(signedString, claims, func(token *jwt.Token) (interface{}, error){
+    return configs.GetJWTSecret(), nil
+  })
+
+  c.NoError(err)
+  c.Equalf(user.ID, claims.ID, fmt.Sprintf("Expected token ID to be: %d but got: %d", user.ID, claims.ID))
+  c.Equalf(user.Email, claims.Email, fmt.Sprintf("Expected token Email to be: %s but got: %s", user.Email, claims.Email))
+  c.Equalf(user.Email, claims.RegisteredClaims.Subject, fmt.Sprintf("Expected %s to be token subject but found %s", user.Email, claims.RegisteredClaims.Subject))
 }
 
 
