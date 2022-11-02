@@ -49,6 +49,13 @@ func HandleLogin(c echo.Context) error {
     })
   }
 
+  publicUser := interfaces.PublicUser{
+    ID: user.ID, 
+    Firstname: user.Firstname, 
+    Lastname: user.Lastname, 
+    Email: user.Email,
+  }
+
   // Compare user password
   passwordOk := utils.ComparePasswords([]byte(user.Password), []byte(payload.Password))
 
@@ -105,8 +112,9 @@ func HandleLogin(c echo.Context) error {
   c.SetCookie(accessCookie)
   c.SetCookie(refreshCookie)
 
-  return c.JSON(http.StatusOK, interfaces.GenericResponse{
+  return c.JSON(http.StatusOK, interfaces.LoginResponse{
     Error: false, 
     Message: "User authenticated successfully",
+    User: publicUser,
   })
 }

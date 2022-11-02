@@ -49,6 +49,12 @@ type User struct {
 
 // ### ### ###
 // Helpers interfaces
+type PublicUser struct {
+  ID 		int	`json:"id, omitempty"`
+  Firstname	string	`json:"firstname"`
+  Lastname	string	`json:"lastname"`
+  Email		string	`json:"email"`
+}
 
 type GenericResponse struct {
 	Error   bool   `json:"error"`
