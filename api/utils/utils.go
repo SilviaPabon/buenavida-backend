@@ -6,6 +6,7 @@ import(
   "github.com/SilviaPabon/buenavida-backend/configs"
   "github.com/SilviaPabon/buenavida-backend/interfaces"
   "github.com/golang-jwt/jwt/v4"
+  "github.com/google/uuid"
 )
 
 // HashPassword Bcrypt hash password
@@ -32,7 +33,9 @@ func ComparePasswords(hash, plain []byte) bool {
 }
 
 // CreateAccessToken jwt create short-live access token
-func CreateJWTAccessToken(user *interfaces.User) (string, error){
+func CreateJWTAccessToken(user *interfaces.User) (string, uuid.UUID, error){
+  identifier := uuid.New()
+
   claims := interfaces.JWTCustomClaims{
     jwt.RegisteredClaims{
       // Jwt default claims
@@ -46,21 +49,24 @@ func CreateJWTAccessToken(user *interfaces.User) (string, error){
     },
     user.ID, 
     user.Email,
+    identifier,
   }
 
   token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
   signed, err := token.SignedString(configs.GetJWTSecret())
 
   if err != nil {
-    return "", err
+    return "", identifier, err
   }
 
-  return signed, nil
+  return signed, identifier, nil
 
 }
 
 // CreateJWTRefreshToken jwt create "long"-live access token
-func CreateJWTRefreshToken(user *interfaces.User) (string, error){
+func CreateJWTRefreshToken(user *interfaces.User) (string, uuid.UUID, error){
+  identifier := uuid.New()
+
   claims := interfaces.JWTCustomClaims{
     jwt.RegisteredClaims{
       ExpiresAt: jwt.NewNumericDate(time.Now().Add(12 * time.Hour)),
@@ -71,14 +77,15 @@ func CreateJWTRefreshToken(user *interfaces.User) (string, error){
     }, 
     user.ID, 
     user.Email,
+    identifier,
   }
   
   token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
   signed, err := token.SignedString(configs.GetJWTSecret())
 
   if err != nil {
-    return "", err
+    return "", identifier, err
   }
 
-  return signed, nil
+  return signed, identifier, nil
 }

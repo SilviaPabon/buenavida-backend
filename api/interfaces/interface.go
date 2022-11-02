@@ -3,6 +3,7 @@ package interfaces
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/golang-jwt/jwt/v4"	
+	"github.com/google/uuid"
 )
 
 // ### ### ###
@@ -58,4 +59,5 @@ type JWTCustomClaims struct {
   jwt.RegisteredClaims // Default claims
   ID		int		`json:"id"`
   Email		string		`json:"email"`
+  UUID		uuid.UUID		`json:"uuid"`
 }

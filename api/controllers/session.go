@@ -61,8 +61,8 @@ func HandleLogin(c echo.Context) error {
 
   // fmt.Printf("%+v\n", user)
   // *** Create tokens ***
-  accessToken, ATerr := utils.CreateJWTAccessToken(&user)
-  refreshToken, RTerr := utils.CreateJWTRefreshToken(&user)
+  accessToken, _, ATerr := utils.CreateJWTAccessToken(&user)
+  refreshToken, refreshTokenUUID, RTerr := utils.CreateJWTRefreshToken(&user)
 
   if ATerr != nil || RTerr != nil {
     return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
@@ -72,7 +72,7 @@ func HandleLogin(c echo.Context) error {
   }
 
   // *** Save token on redis *** ***
-  err = models.SaveRefreshTokenOnRedis(refreshToken, user.Email)
+  err = models.SaveRefreshTokenOnRedis(refreshTokenUUID, user.Email)
 
   if err != nil {
     return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
