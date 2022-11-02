@@ -8,6 +8,7 @@ import(
   "github.com/golang-jwt/jwt/v4"
   "github.com/SilviaPabon/buenavida-backend/configs"
   "github.com/SilviaPabon/buenavida-backend/interfaces"
+  "github.com/SilviaPabon/buenavida-backend/models"
 )
 
 // MustProvideAccessToken Verify access token is present as a cookie
@@ -56,17 +57,28 @@ func MustProvideRefreshToken(next echo.HandlerFunc) echo.HandlerFunc {
       })
     }
 
+    // Validate claims
     claims := &interfaces.JWTCustomClaims{}
     signedString := cookie.Value
 
     _, err = jwt.ParseWithClaims(signedString, claims, func(t *jwt.Token) (interface {}, error){
       return configs.GetJWTSecret(), nil
     })
-
+    
     if err != nil {
       return c.JSON(http.StatusForbidden, interfaces.GenericResponse{
 	Error: true, 
 	Message: "Refresh token is not valid",
+      })
+    }
+    
+    // Verify token exists on redis white-list
+    storedToken, err := models.GetRefreshTokenFromRedis(claims.Email)
+
+    if err != nil || storedToken != claims.UUID.String() {
+      return c.JSON(http.StatusForbidden, interfaces.GenericResponse{
+	Error: true, 
+	Message: "Refresh token is not authentic",
       })
     }
 

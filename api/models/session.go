@@ -26,3 +26,12 @@ func SaveRefreshTokenOnRedis(refreshTokenIdentifier uuid.UUID, owner string) err
   err := redis.Set(ctx, owner, identifierStr, 12 * time.Hour).Err()
   return err
 }
+
+// GetRefreshTokenFromRedis get user refresh token from the user mail
+func GetRefreshTokenFromRedis(owner string) (string, error) {
+  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  defer cancel()
+
+  token, err := redis.Get(ctx, owner).Result()
+  return token, err
+}
