@@ -76,7 +76,7 @@ func ConnectToRedis() *redis.Client {
   })
 
   if _, err := client.Ping(context.Background()).Result(); err != nil {
-    panic(err)
+    panic("🟥 Unable to ping redis database 🟥")
   }
 
   return client
