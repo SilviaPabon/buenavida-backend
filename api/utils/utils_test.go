@@ -4,7 +4,10 @@ import(
   "fmt"
   "errors"
   "testing"
+  "github.com/golang-jwt/jwt/v4"
   "github.com/stretchr/testify/require"
+  "github.com/SilviaPabon/buenavida-backend/configs"
+  "github.com/SilviaPabon/buenavida-backend/interfaces"
 )
 
 // TestHashPasswordSuccess 
@@ -46,3 +49,37 @@ func TestHashPasswordFail(t *testing.T){
   // Return fucntion to its original value
   bcryptGenerateFromPassword = originalFunc
 }
+
+// TestCreateAccessTokenSuccess 
+func TestCreateAccessTokenSuccess(t *testing.T){
+  c := require.New(t)
+
+  // Create a testing user (interface)
+  user := interfaces.User{
+    ID: 1, 
+    Firstname: "Foo", 
+    Lastname: "Bar", 
+    Email: "foo@bar.com", 
+    Password: "secret",
+  }
+
+  // Test function
+  signedString, _, err := CreateJWTAccessToken(&user)
+  c.NoError(err)
+  c.NotEqualf(signedString, "", fmt.Sprintf("Exptected signed string not to be empty"))
+
+  // Get token claims
+  claims := &interfaces.JWTCustomClaims{}
+
+  _, err = jwt.ParseWithClaims(signedString, claims, func(token *jwt.Token) (interface{}, error){
+    return configs.GetJWTSecret(), nil
+  })
+
+  c.NoError(err)
+  c.Equalf(user.ID, claims.ID, fmt.Sprintf("Expected token ID to be: %d but got: %d", user.ID, claims.ID))
+  c.Equalf(user.Email, claims.Email, fmt.Sprintf("Expected token Email to be: %s but got: %s", user.Email, claims.Email))
+  c.Equalf(user.Email, claims.RegisteredClaims.Subject, fmt.Sprintf("Expected %s to be token subject but found %s", user.Email, claims.RegisteredClaims.Subject))
+
+}
+
+
