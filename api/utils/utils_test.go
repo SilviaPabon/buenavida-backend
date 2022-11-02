@@ -2,6 +2,7 @@ package utils
 
 import(
   "fmt"
+  "errors"
   "testing"
   "github.com/stretchr/testify/require"
 )
@@ -25,4 +26,23 @@ func TestHashPasswordSuccess(t *testing.T){
   // Verify hash with different password
   areEqual = ComparePasswords(hash, []byte("testingpassword2"))
   c.Equalf(false, areEqual, fmt.Sprintf("Expected passwords to be different"))
+}
+
+// TestHashPasswordFail
+func TestHashPasswordFail(t *testing.T){
+  c := require.New(t)
+
+  // Mock bcrypt function
+  originalFunc := bcryptGenerateFromPassword
+  bcryptGenerateFromPassword = func([]byte, int) ([]byte, error) {
+    // Intentional error
+    return []byte{}, errors.New("Oops...") 
+  }
+
+  hash, err := HashPassword([]byte("testingpassword"))
+  c.NotNilf(err, fmt.Sprintf("Expexted an error but got nil"))
+  c.Equalf(0, len(hash), fmt.Sprintf("Expected an empty hash"))
+
+  // Return fucntion to its original value
+  bcryptGenerateFromPassword = originalFunc
 }

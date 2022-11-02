@@ -9,9 +9,11 @@ import(
   "github.com/google/uuid"
 )
 
+var bcryptGenerateFromPassword = bcrypt.GenerateFromPassword
+
 // HashPassword Bcrypt hash password
 func HashPassword(passBytes []byte) ([]byte, error) {
-  hash, err := bcrypt.GenerateFromPassword(passBytes, bcrypt.DefaultCost)
+  hash, err := bcryptGenerateFromPassword(passBytes, bcrypt.DefaultCost)
 
   if err != nil {
     return []byte{}, err
