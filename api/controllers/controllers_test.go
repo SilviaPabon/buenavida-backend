@@ -12,6 +12,10 @@ import(
   "github.com/SilviaPabon/buenavida-backend/interfaces"
 )
 
+// #### #### #### #### ####
+// #### #### Products #### ####
+// #### #### #### #### ####
+
 // Helper function to create the context and recorder
 func setup(method, path string) (echo.Context, *httptest.ResponseRecorder, *http.Request) {
   e := echo.New()
@@ -181,3 +185,9 @@ func TestProductsPaginationInternalServerError(t *testing.T){
 
   c.Equalf(true, reply.Error, fmt.Sprintf("Expected custom error on JSON to be true but got %t", reply.Error))
 }
+
+// #### #### #### #### ####
+// #### #### User #### ####
+// #### #### #### #### ####
+
+// To do
