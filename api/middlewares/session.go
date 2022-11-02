@@ -17,7 +17,7 @@ func MustProvideAccessToken(next echo.HandlerFunc) echo.HandlerFunc {
     cookie, err := c.Cookie("access-token")
 
     if err != nil {
-      return c.JSON(http.StatusUnauthorized, interfaces.GenericResponse{
+      return c.JSON(http.StatusForbidden, interfaces.GenericResponse{
 	Error: true, 
 	Message: "Access token wasn't provided",
       })
@@ -32,7 +32,7 @@ func MustProvideAccessToken(next echo.HandlerFunc) echo.HandlerFunc {
     })
     
     if err != nil {
-      return c.JSON(http.StatusUnauthorized, interfaces.GenericResponse{
+      return c.JSON(http.StatusForbidden, interfaces.GenericResponse{
 	Error: true, 
 	Message: "Access token is not valid",
       })
@@ -41,4 +41,36 @@ func MustProvideAccessToken(next echo.HandlerFunc) echo.HandlerFunc {
     // Go to the handler if all is valid
     return next(c)
   }
-} 
+}
+
+// MustProvideRefreshToken Verify refresh token is present as a cookie
+func MustProvideRefreshToken(next echo.HandlerFunc) echo.HandlerFunc {
+  return func(c echo.Context) error {
+    // Get token
+    cookie, err := c.Cookie("refresh-token")
+
+    if err != nil {
+      return c.JSON(http.StatusForbidden, interfaces.GenericResponse{
+	Error: true, 
+	Message: "Refresh token was not provided",
+      })
+    }
+
+    claims := &interfaces.JWTCustomClaims{}
+    signedString := cookie.Value
+
+    _, err = jwt.ParseWithClaims(signedString, claims, func(t *jwt.Token) (interface {}, error){
+      return configs.GetJWTSecret(), nil
+    })
+
+    if err != nil {
+      return c.JSON(http.StatusForbidden, interfaces.GenericResponse{
+	Error: true, 
+	Message: "Refresh token is not valid",
+      })
+    }
+
+    return next(c)
+    
+  }
+}

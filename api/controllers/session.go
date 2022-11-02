@@ -89,7 +89,7 @@ func HandleLogin(c echo.Context) error {
   refreshCookie.Value = refreshToken
   refreshCookie.Expires = time.Now().Add(12*time.Hour)
   refreshCookie.HttpOnly = true
-  refreshCookie.Path = "/session/refresh"
+  refreshCookie.Path = "/api/session/refresh"
 
   // *** Send cookies on response ***
   c.SetCookie(accessCookie)
