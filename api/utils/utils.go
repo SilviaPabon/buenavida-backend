@@ -20,6 +20,17 @@ func HashPassword(passBytes []byte) ([]byte, error) {
 
 }
 
+// ComparePasswords Bcrypt compare password with its possible has
+func ComparePasswords(hash, plain []byte) bool {
+  err := bcrypt.CompareHashAndPassword(hash, plain)
+
+  if err != nil{
+    return false
+  }
+
+  return true
+}
+
 // CreateAccessToken jwt create short-live access token
 func CreateJWTAccessToken(user *interfaces.User) (string, error){
   claims := interfaces.JWTCustomClaims{

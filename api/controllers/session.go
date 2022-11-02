@@ -49,6 +49,16 @@ func HandleLogin(c echo.Context) error {
     })
   }
 
+  // Compare user password
+  passwordOk := utils.ComparePasswords([]byte(user.Password), []byte(payload.Password))
+
+  if !passwordOk {
+    return c.JSON(http.StatusForbidden, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Password is not correct",
+    })
+  }
+
   // fmt.Printf("%+v\n", user)
   // *** Create tokens ***
   accessToken, ATerr := utils.CreateJWTAccessToken(&user)
