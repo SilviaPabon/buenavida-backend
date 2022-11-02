@@ -13,9 +13,12 @@ PG_USER=youruser
 PG_PASSWORD=yourpassword
 PG_HOST=yourhost
 PG_PORT=yourport
+JWT_KEY=yoursecret
 ```
 
 If you want to use the provided docker-compose file as development environment, your `MONGO_USER`, `MONGO_PASSWORD`, `PG_USER` and `PG_PASSWORD` are all `admin` and both hosts are `localhost`.
+
+**Recommended**: Use some kind of hash / MD5 as JWT_KEY.
 
 ## Build docker images
 
