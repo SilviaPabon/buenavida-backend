@@ -217,7 +217,7 @@ func TestSignupSuccess(t *testing.T){
 
   // Payload
   randEmail := faker.Email() // Save email to delete the user
-  payload := interfaces.User{ // Generated with faker.js
+  payload := interfaces.User{
     Firstname: faker.FirstName(),
     Lastname: faker.LastName(), 
     Email: randEmail, 
@@ -235,8 +235,39 @@ func TestSignupSuccess(t *testing.T){
   c.NoError(err)
 
   c.Equalf(http.StatusOK, w.Code, fmt.Sprintf("Expected status code to be: %d but got: %d", http.StatusOK, w.Code))
-  c.Equalf(false, reply.Error, fmt.Sprintf("Extected custom error to be false but got: %t", reply.Error))
+  c.Equalf(false, reply.Error, fmt.Sprintf("Expected custom error to be false but got: %t", reply.Error))
 
+  // Remove user from database
+  query := `DELETE FROM users WHERE "mail" = $1`
+  pg.QueryRowContext(ctx, query, randEmail)
+}
+
+func TestSignupDuplicatedMail(t *testing.T){
+  c := require.New(t)
+
+  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  defer cancel()
+  
+  randEmail := faker.Email()
+  payload := interfaces.User{
+    Firstname: faker.FirstName(),
+    Lastname: faker.LastName(), 
+    Email: randEmail, 
+    Password: faker.Password() + "#1",  
+  }
+
+  // Make request (Save user first time)
+  context, w, _ := setupPost(http.MethodPost, "/api/user", payload)
+  err := HandleUserPost(context)
+  c.NoError(err)
+  c.Equal(http.StatusOK, w.Code)
+
+  // Try to save the user again (Tey to save a duplicated user)
+  context, w, _ = setupPost(http.MethodPost, "/api/user", payload)
+  err = HandleUserPost(context)
+  c.NoError(err)
+  c.Equalf(http.StatusConflict, w.Code, fmt.Sprintf("Expected status code to be: %d due to duplicated email but found: %d", http.StatusConflict, w.Code))
+  
   // Remove user from database
   query := `DELETE FROM users WHERE "mail" = $1`
   pg.QueryRowContext(ctx, query, randEmail)
