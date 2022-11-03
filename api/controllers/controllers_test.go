@@ -46,7 +46,7 @@ func setupPost(method, path string, payload interface{}) (echo.Context, *httptes
   return context, w, r
 }
 
-// Test /api/producst success
+// TestGetProductsSuccess /api/producst success
 func TestGetProductsSuccess(t *testing.T){
   c := require.New(t)
 
@@ -71,7 +71,7 @@ func TestGetProductsSuccess(t *testing.T){
   c.GreaterOrEqualf(len(reply.Products), 25, fmt.Sprintf("Got: %d products --> At least 25 products are required", len(reply.Products)))
 }
 
-// Test /api/products failed
+// TestGetProductsInternalServerError /api/products failed
 func TestGetProductsInternalServerError(t *testing.T) {
   c := require.New(t)
 
@@ -103,7 +103,7 @@ func TestGetProductsInternalServerError(t *testing.T) {
   c.Equalf(true, reply.Error, fmt.Sprintf("Expected custom error on JSON to be true but got %t", reply.Error))
 }
 
-// Test /api/products/:id success
+// TestProductsPaginationSuccess /api/products/:id success
 func TestProductsPaginationSuccess(t *testing.T){
   c := require.New(t)
 
@@ -125,7 +125,7 @@ func TestProductsPaginationSuccess(t *testing.T){
   c.Equalf(12, len(reply.Products), fmt.Sprintf("Got: %d products --> Expected pagination was 12 items", len(reply.Products)))
 }
 
-// Test /api/products/:id Not found
+// TestProductsPaginationNotFound /api/products/:id Not found
 func TestProductsPaginationNotFound(t *testing.T){
   c := require.New(t)
 
@@ -146,7 +146,7 @@ func TestProductsPaginationNotFound(t *testing.T){
   c.Equalf(true, reply.Error, fmt.Sprintf("Expected custom error on JSON to be true but got %t", reply.Error))
 }
 
-// Test /api/products/:id Bad Request
+// TestProductsPaginationBadRequest /api/products/:id Bad Request
 func TestProductsPaginationBadRequest(t *testing.T){
   c := require.New(t)
 
@@ -177,7 +177,7 @@ func TestProductsPaginationBadRequest(t *testing.T){
   c.Equalf(true, reply.Error, fmt.Sprintf("Expected custom error on JSON to be true but got %t", reply.Error))
 }
 
-// Test /api/products/:id Internal server error
+// TestProductsPaginationInternalServerError /api/products/:id Internal server error
 func TestProductsPaginationInternalServerError(t *testing.T){
   c := require.New(t)
   context, w, _ := setup(http.MethodGet, "/api/products")
@@ -206,7 +206,7 @@ func TestProductsPaginationInternalServerError(t *testing.T){
   c.Equalf(true, reply.Error, fmt.Sprintf("Expected custom error on JSON to be true but got %t", reply.Error))
 }
 
-// Test /api/products/search success
+// TestProductsSearchSuccess /api/products/search success
 func TestProductsSearchSuccess(t *testing.T) {
   c := require.New(t)
 
@@ -225,6 +225,7 @@ func TestProductsSearchSuccess(t *testing.T) {
   c.NoError(err)
 
   c.GreaterOrEqual(len(reply.Products), 21, fmt.Sprintf("Exptected at least %d products matching the search criteria but gott %d", 21, len(reply.Products)))
+  c.Equalf(false, reply.Error, fmt.Sprintf("Exptected cuscom error to be false but found: %t", reply.Error))
 
   // Make request 2
   payload2 := interfaces.FilterProductsByText{
@@ -241,11 +242,45 @@ func TestProductsSearchSuccess(t *testing.T) {
   c.NoError(err)
 
   c.GreaterOrEqual(len(reply2.Products), 21, fmt.Sprintf("Exptected at least %d products matching the search criteria but gott %d", 21, len(reply2.Products)))
+  c.Equalf(false, reply2.Error, fmt.Sprintf("Exptected custom error to be false but found: %t", reply2.Error))
+}
+
+// TestProductDetailsSuccess /api/product/:id 
+func TestProductDetailsSucess(t *testing.T){
+  c := require.New(t)
+
+  context, w, _ := setup(http.MethodGet, "/api/product")
+  context.SetParamNames("id")
+
+  // IMPORTANT: This id can change if you run the bulkdata command again
+  // So, replace it with a valid MongoID in your case
+  targetId := "635f406d344c343aabfee5f1"
+  context.SetParamValues(targetId)
+
+  // Make request
+  var reply interfaces.GenericProductResponse
+
+  err := GetFromID(context)
+  c.NoError(err)
+
+  err = json.Unmarshal(w.Body.Bytes(), &reply)
+  c.NoError(err)
+
+  c.Equalf(http.StatusOK, w.Code, fmt.Sprintf("Exptected status code to be: %d but got: %d", http.StatusOK, w.Code))
+  c.Equalf(false, reply.Error, fmt.Sprintf("Exptected custom error to be false but got: %t", reply.Error))
+  c.Equalf(targetId, reply.Product.ID.Hex(), fmt.Sprintf("Expected result product id: %s to be equal than target id: %s", reply.Product.ID.Hex(), targetId))
+
+  // Vefiry non-zero values
+  c.NotEqual("", reply.Product.Name) 
+  c.NotEqual("", reply.Product.Image) 
+  c.NotEqual(0.0, reply.Product.Price) 
 }
 
 // #### #### #### #### ####
 // #### #### User #### ####
 // #### #### #### #### ####
+
+// TestSignupSuccess /api/user POST
 func TestSignupSuccess(t *testing.T){
   c := require.New(t)
 
@@ -279,6 +314,7 @@ func TestSignupSuccess(t *testing.T){
   pg.QueryRowContext(ctx, query, randEmail)
 }
 
+// TestSignupDuplicatedMail /api/user POST
 func TestSignupDuplicatedMail(t *testing.T){
   c := require.New(t)
 
