@@ -7,6 +7,7 @@ import(
   "context"
   "errors"
   "testing"
+  "net/url"
   "net/http"
   "encoding/json"
   "net/http/httptest"
@@ -274,6 +275,65 @@ func TestProductDetailsSucess(t *testing.T){
   c.NotEqual("", reply.Product.Name) 
   c.NotEqual("", reply.Product.Image) 
   c.NotEqual(0.0, reply.Product.Price) 
+}
+
+// TestProductImageSuccess /api/products/image/:serial
+func TestProductImageSuccess(t *testing.T){
+  c := require.New(t)
+
+  context, w, _ := setup(http.MethodGet, "/api/products/image")
+  context.SetParamNames("serial")
+  context.SetParamValues("1")
+
+  // Make request
+  var reply interfaces.ProductImageResponse
+  err := HandleProductImageRequest(context)
+  c.NoError(err)
+
+  err = json.Unmarshal(w.Body.Bytes(), &reply)
+  c.NoError(err)
+
+  c.Equalf(http.StatusOK, w.Code, fmt.Sprintf("Expected status code to be: %d but got: %d", http.StatusOK, w.Code))
+  c.Equalf(false, reply.Error, fmt.Sprintf("Expected custom error to be false but got: %t", reply.Error))
+  c.NotEqual("", reply.Image) // Non zero value
+
+  _, err = url.ParseRequestURI(reply.Image)
+  c.NoErrorf(err, fmt.Sprintf("Expected image to ve a valid URI, got: %s", reply.Image))
+}
+
+// TestProductImageFails /api/products/image/:serial
+func TestProductImageFails(t *testing.T){
+  c := require.New(t)
+
+  // *** Test bad request ***
+  context, w, _ := setup(http.MethodGet, "/api/products/image")
+  context.SetParamNames("serial")
+  context.SetParamValues("hehe")
+
+  var reply1 interfaces.GenericResponse
+  err := HandleProductImageRequest(context)
+  c.NoError(err)
+
+  err = json.Unmarshal(w.Body.Bytes(), &reply1)
+  c.NoError(err)
+
+  c.Equalf(http.StatusBadRequest, w.Code, fmt.Sprintf("Expected status code to be: %d but got: %d", http.StatusBadRequest, w.Code))
+  c.Equalf(true, reply1.Error, fmt.Sprintf("Expected custom error to be true but got: %t", reply1.Error))
+
+  // *** Test not found ***
+  context, w, _ = setup(http.MethodGet, "/api/products/image")
+  context.SetParamNames("serial")
+  context.SetParamValues("232")
+
+  var reply2 interfaces.GenericResponse
+  err = HandleProductImageRequest(context)
+  c.NoError(err)
+
+  err = json.Unmarshal(w.Body.Bytes(), &reply2)
+  c.NoError(err)
+
+  c.Equalf(http.StatusNotFound, w.Code, fmt.Sprintf("Expected status code to be: %d but got: %d", http.StatusNotFound, w.Code))
+  c.Equalf(true, reply2.Error, fmt.Sprintf("Expected custom error to be true but got: %t", reply2.Error))
 }
 
 // #### #### #### #### ####
