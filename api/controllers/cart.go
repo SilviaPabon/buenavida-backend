@@ -108,9 +108,17 @@ func HandleCartPut(c echo.Context) error {
   })
 
   // Make database query
+  err = models.UpdateProductInCart(claims.ID, payload.Amount, payload.Id.Hex())
+
+  if err != nil {
+    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Unable to update product in cart. Try again.",
+    })
+  }
 
   return c.JSON(http.StatusOK, interfaces.GenericResponse{
     Error: false, 
-    Message: "Received",
+    Message: "Cart updated successfully",
   })
 }
