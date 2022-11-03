@@ -2,15 +2,22 @@ package controllers
 
 import(
   "fmt"
+  "time"
+  "bytes"
+  "context"
   "errors"
   "testing"
   "net/http"
   "encoding/json"
   "net/http/httptest"
   "github.com/labstack/echo/v4"
+  "github.com/go-faker/faker/v4"
   "github.com/stretchr/testify/require"
+  "github.com/SilviaPabon/buenavida-backend/configs" // db connection
   "github.com/SilviaPabon/buenavida-backend/interfaces"
 )
+
+var pg = configs.ConnectToPostgres()
 
 // #### #### #### #### ####
 // #### #### Products #### ####
@@ -22,6 +29,19 @@ func setup(method, path string) (echo.Context, *httptest.ResponseRecorder, *http
   r := httptest.NewRequest(method, path, nil)
   w := httptest.NewRecorder()
   context := e.NewContext(r, w)
+
+  return context, w, r
+}
+
+// Helper function to create a post request
+func setupPost(method, path string, payload interface{}) (echo.Context, *httptest.ResponseRecorder, *http.Request){
+  payloadBytes, _ := json.Marshal(payload)
+
+  e := echo.New()
+  r := httptest.NewRequest(method, path, bytes.NewBuffer(payloadBytes))
+  r.Header.Set("Content-Type", "application/json")
+  w := httptest.NewRecorder()
+  context := e.NewContext(r,w)
 
   return context, w, r
 }
@@ -189,5 +209,35 @@ func TestProductsPaginationInternalServerError(t *testing.T){
 // #### #### #### #### ####
 // #### #### User #### ####
 // #### #### #### #### ####
+func TestSignupSuccess(t *testing.T){
+  c := require.New(t)
 
-// To do
+  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  defer cancel()
+
+  // Payload
+  randEmail := faker.Email() // Save email to delete the user
+  payload := interfaces.User{ // Generated with faker.js
+    Firstname: faker.FirstName(),
+    Lastname: faker.LastName(), 
+    Email: randEmail, 
+    Password: faker.Password() + "#1",  
+  }
+
+  // Make request
+  context, w, _ := setupPost(http.MethodPost, "/api/user", payload)
+  err := HandleUserPost(context)
+  c.NoError(err)
+
+  // Validate response
+  var reply interfaces.GenericResponse
+  err = json.Unmarshal(w.Body.Bytes(), &reply)
+  c.NoError(err)
+
+  c.Equalf(http.StatusOK, w.Code, fmt.Sprintf("Expected status code to be: %d but got: %d", http.StatusOK, w.Code))
+  c.Equalf(false, reply.Error, fmt.Sprintf("Extected custom error to be false but got: %t", reply.Error))
+
+  // Remove user from database
+  query := `DELETE FROM users WHERE "mail" = $1`
+  pg.QueryRowContext(ctx, query, randEmail)
+}
