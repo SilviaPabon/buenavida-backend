@@ -16,3 +16,8 @@ type LoginPayload struct{
 type AddToCartPayload struct{
   Id		primitive.ObjectID	`bson:"_id, omitempty" json:"id"`			
 }
+
+type UpdateCartPayload struct{
+  Id		primitive.ObjectID	`bson:"_id, omitempty" json:"id"`
+  Amount	int			`json:"amount"`
+}

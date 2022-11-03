@@ -65,6 +65,50 @@ func HandleCartPost(c echo.Context) error {
 
 // HandleCartPut Update the amount of some product in the cart
 func HandleCartPut(c echo.Context) error {
+  // Get json payload
+  payload := new(interfaces.UpdateCartPayload)
+
+  if err := c.Bind(payload); err != nil {
+    return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Unable to process request.",
+    })
+  }
+  
+  if payload.Id.IsZero() { // Validate provided object id
+    return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Provided object id is emtpy or not valid",
+    })
+  }
+
+  if payload.Amount <= 0 || payload.Amount >= 128 { // Validate amount
+    return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Product amount must be greater than zero and lower than 128.",
+    })
+  }
+
+  // Validate the product exists on mongo
+  _, err := models.GetDetailsFromID(payload.Id.Hex())
+
+  if err != nil {
+    return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Product was not found.",
+    })
+  }
+
+  // Get user id from token
+  cookie, _ := c.Cookie("access-token")
+  token := cookie.Value
+  claims := &interfaces.JWTCustomClaims{}
+  jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error){
+    return configs.GetJWTSecret(), nil
+  })
+
+  // Make database query
+
   return c.JSON(http.StatusOK, interfaces.GenericResponse{
     Error: false, 
     Message: "Received",
