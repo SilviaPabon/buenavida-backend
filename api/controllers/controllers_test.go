@@ -206,6 +206,43 @@ func TestProductsPaginationInternalServerError(t *testing.T){
   c.Equalf(true, reply.Error, fmt.Sprintf("Expected custom error on JSON to be true but got %t", reply.Error))
 }
 
+// Test /api/products/search success
+func TestProductsSearchSuccess(t *testing.T) {
+  c := require.New(t)
+
+  // Payload
+  payload1 := interfaces.FilterProductsByText{
+    Criteria: "Aceite",
+  }
+
+  // Make request 1
+  context, w, _ := setupPost(http.MethodPost, "/api/products/search", payload1)
+  err := HandleProductsSearch(context)
+  c.NoError(err)
+
+  var reply interfaces.GenericProductsArrayResponse
+  err = json.Unmarshal(w.Body.Bytes(), &reply)
+  c.NoError(err)
+
+  c.GreaterOrEqual(len(reply.Products), 21, fmt.Sprintf("Exptected at least %d products matching the search criteria but gott %d", 21, len(reply.Products)))
+
+  // Make request 2
+  payload2 := interfaces.FilterProductsByText{
+    Criteria: "aCeIte",
+  }
+
+  // Make request 1
+  context, w, _ = setupPost(http.MethodPost, "/api/products/search", payload2)
+  err = HandleProductsSearch(context)
+  c.NoError(err)
+
+  var reply2 interfaces.GenericProductsArrayResponse
+  err = json.Unmarshal(w.Body.Bytes(), &reply2)
+  c.NoError(err)
+
+  c.GreaterOrEqual(len(reply2.Products), 21, fmt.Sprintf("Exptected at least %d products matching the search criteria but gott %d", 21, len(reply2.Products)))
+}
+
 // #### #### #### #### ####
 // #### #### User #### ####
 // #### #### #### #### ####
@@ -253,7 +290,7 @@ func TestSignupDuplicatedMail(t *testing.T){
     Firstname: faker.FirstName(),
     Lastname: faker.LastName(), 
     Email: randEmail, 
-    Password: faker.Password() + "#1",  
+    Password: faker.Password() + "#1", 
   }
 
   // Make request (Save user first time)
