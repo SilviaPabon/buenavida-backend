@@ -13,12 +13,14 @@ import(
   "net/http/httptest"
   "github.com/labstack/echo/v4"
   "github.com/go-faker/faker/v4"
+  "github.com/golang-jwt/jwt/v4"
   "github.com/stretchr/testify/require"
   "github.com/SilviaPabon/buenavida-backend/configs" // db connection
   "github.com/SilviaPabon/buenavida-backend/interfaces"
 )
 
 var pg = configs.ConnectToPostgres()
+var redis = configs.ConnectToRedis()
 
 // #### #### #### #### ####
 // #### #### Products #### ####
@@ -404,4 +406,91 @@ func TestSignupDuplicatedMail(t *testing.T){
   // Remove user from database
   query := `DELETE FROM users WHERE "mail" = $1`
   pg.QueryRowContext(ctx, query, randEmail)
+}
+
+// #### #### #### #### ####
+// #### #### Session #### ####
+// #### #### #### #### ####
+
+// TestLoginSuccess /api/session/login
+func TestLoginSuccess(t *testing.T){
+  c := require.New(t)
+  
+  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  defer cancel()
+
+  // *** Create a new user ***
+  randEmail := faker.Email() // Save email to delete the user
+  randPassword := faker.Password() + "@1" // Save password to login
+
+  payload := interfaces.User{
+    Firstname: faker.FirstName(),
+    Lastname: faker.LastName(), 
+    Email: randEmail, 
+    Password: randPassword,  
+  }
+
+  context, w, _ := setupPost(http.MethodPost, "/api/user", payload)
+  err := HandleUserPost(context)
+  c.NoError(err)
+  c.Equal(http.StatusOK, w.Code)
+
+  // *** Login with the new user ***
+  loginPayload := interfaces.LoginPayload{
+    Mail: randEmail, 
+    Password: randPassword,
+  }
+
+  // Make request
+  context, w, _ = setupPost(http.MethodPost, "/api/session/login", loginPayload)
+  err = HandleLogin(context)
+  c.NoError(err)
+
+  var reply interfaces.LoginResponse
+  err = json.Unmarshal(w.Body.Bytes(), &reply)
+  c.NoError(err)
+
+  // *** Validate request (first level) ***
+  c.Equalf(http.StatusOK, w.Code, fmt.Sprintf("Exptected status code to be: %d but got: %d", http.StatusOK, w.Code))
+  c.Equalf(false, reply.Error, fmt.Sprintf("Expected custom error to be false but got %t", reply.Error))
+  
+  // *** Validate cookies ***
+  cookies := w.Result().Cookies()
+  c.Equalf(2, len(cookies), fmt.Sprintf("Expected to have: %d cookies but got: %d", 2, len(cookies)))
+  c.Equalf("access-token", cookies[0].Name, fmt.Sprintf("Expected do obtain an access-token but got: %s", cookies[0].Name))
+  c.Equalf("refresh-token", cookies[1].Name, fmt.Sprintf("Expected do obtain a refresh-token but got: %s", cookies[1].Name))
+  c.Equalf(true, cookies[0].HttpOnly, fmt.Sprintf("Exptected access-token to be http only"))
+  c.Equalf(true, cookies[1].HttpOnly, fmt.Sprintf("Exptected refresh-token to be http only"))
+  c.Equalf("/api/session/refresh", cookies[1].Path, fmt.Sprintf("Expected refresh-token to be only valid on /api/session/refresh route"))
+
+  // *** Validate cookies internals ***
+  accessTokenClaims := &interfaces.JWTCustomClaims{}
+  refreshTokenClaims := &interfaces.JWTCustomClaims{}
+
+  _, err = jwt.ParseWithClaims(cookies[0].Value, accessTokenClaims, func(token *jwt.Token)(interface{}, error){
+    return configs.GetJWTSecret(), nil
+  })
+  c.NoError(err)
+  
+  _, err = jwt.ParseWithClaims(cookies[1].Value, refreshTokenClaims, func(token *jwt.Token)(interface{}, error){
+    return configs.GetJWTSecret(), nil
+  })
+  c.NoError(err)
+
+  c.Equal(randEmail, accessTokenClaims.Email, fmt.Sprintf("Expected access-token email to be: %s but got %s", randEmail, accessTokenClaims.Email))
+  c.Equal(randEmail, refreshTokenClaims.Email, fmt.Sprintf("Expected refresh-token email to be: %s but got %s", randEmail, refreshTokenClaims.Email))
+  c.Equal(randEmail, accessTokenClaims.RegisteredClaims.Subject, fmt.Sprintf("Expected access-token email to be: %s but got %s", randEmail, accessTokenClaims.RegisteredClaims.Subject))
+  c.Equal(randEmail, refreshTokenClaims.RegisteredClaims.Subject, fmt.Sprintf("Expected refresh-token email to be: %s but got %s", randEmail, refreshTokenClaims.RegisteredClaims.Subject))
+
+  // *** Validate response user information *** 
+  c.Equal(randEmail, reply.User.Email)
+  c.Equal(payload.Firstname, reply.User.Firstname)
+  c.Equal(payload.Lastname, reply.User.Lastname)
+
+  // Remove user from database
+  query := `DELETE FROM users WHERE "mail" = $1`
+  pg.QueryRowContext(ctx, query, randEmail)
+
+  // Remove entry from redis database
+  redis.Del(ctx, randEmail)
 }
