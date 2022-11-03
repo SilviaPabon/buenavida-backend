@@ -10,4 +10,6 @@ import(
 func SetupCartRoutes(e *echo.Echo){
   // Add a new product to the cart
   e.POST("/api/cart", controllers.HandleCartPost, middlewares.MustProvideAccessToken)
+  // Update the amount of some product in the cart
+  e.PUT("/api/cart", controllers.HandleCartPut, middlewares.MustProvideAccessToken)
 }

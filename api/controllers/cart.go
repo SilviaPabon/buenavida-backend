@@ -62,3 +62,11 @@ func HandleCartPost(c echo.Context) error {
     Message: "Product added to the cart successfully",
   })
 }
+
+// HandleCartPut Update the amount of some product in the cart
+func HandleCartPut(c echo.Context) error {
+  return c.JSON(http.StatusOK, interfaces.GenericResponse{
+    Error: false, 
+    Message: "Received",
+  })
+}
