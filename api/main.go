@@ -29,6 +29,7 @@ func main() {
 	routes.SetupProductsRoutes(e)
 	routes.SetupUserRoutes(e)
 	routes.SetupSessionRoutes(e)
+	routes.SetupCartRoutes(e)
 
 	// ### ### ###
 	// Configure port
