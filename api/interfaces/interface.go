@@ -2,6 +2,8 @@ package interfaces
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/golang-jwt/jwt/v4"	
+	"github.com/google/uuid"
 )
 
 // ### ### ###
@@ -37,8 +39,8 @@ type Order struct {
 	Total    float64            `bson:"total" json:"total"`
 }
 
-type Users struct {
-	ID        primitive.ObjectID `json:"id, omitempty"`
+type User struct {
+	ID        int		     `json:"id, omitempty"`
 	Firstname string             `json:"firstname" validate:"required,min=1,max=125"`
 	Lastname  string             `json:"lastname" validate:"required,min=1,max=125"`
 	Password  string             `json:"password" validate:"required,min=8,max=250,containsany=!@#?*,containsany=1234567890,containsany=ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"`
@@ -47,8 +49,21 @@ type Users struct {
 
 // ### ### ###
 // Helpers interfaces
+type PublicUser struct {
+  ID 		int	`json:"id, omitempty"`
+  Firstname	string	`json:"firstname"`
+  Lastname	string	`json:"lastname"`
+  Email		string	`json:"email"`
+}
 
 type GenericResponse struct {
 	Error   bool   `json:"error"`
 	Message string `json:"message"`
+}
+
+type JWTCustomClaims struct {
+  jwt.RegisteredClaims // Default claims
+  ID		int		`json:"id"`
+  Email		string		`json:"email"`
+  UUID		uuid.UUID		`json:"uuid"`
 }

@@ -2,10 +2,13 @@ package configs
 
 import(
   "fmt"
+  "os"
   "context"
+  "strconv"
   "time"
   "go.mongodb.org/mongo-driver/mongo"
   "go.mongodb.org/mongo-driver/mongo/options"
+  "github.com/go-redis/redis/v9"
   "database/sql"
   _ "github.com/lib/pq"
 )
@@ -36,7 +39,6 @@ func ConnectToMongo() *mongo.Client{
     panic("🟥 Unable to get response from dababase 🟥")
   }
 
-  fmt.Println("🟩 Connected to mongo 🟩")
   return client
 }
 
@@ -46,7 +48,7 @@ func GetCollection(collection string) *mongo.Collection{
   return col
 }
 
-// ### ### ### Postgres ### ### ###\
+// ### ### ### Postgres ### ### ###
 // ConnectToPostgres creates a postgres connecion
 func ConnectToPostgres() *sql.DB {
   db, err := sql.Open("postgres", getPostgresURI())
@@ -56,6 +58,35 @@ func ConnectToPostgres() *sql.DB {
   }
 
   return db
+}
+
+// ### ### ### Redis ### ### ###
+// ConnectToRedis creates a redis connection
+func ConnectToRedis() *redis.Client {
+  database, err := strconv.Atoi(os.Getenv("REDIS_DATABASE"))
+
+  if err != nil {
+    panic("🟥 Unable to parse redis database 🟥")
+  }
+
+  client := redis.NewClient(&redis.Options{
+    Addr: fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT")),
+    Password: os.Getenv("REDIS_PASSWORD"),
+    DB: database,
+  })
+
+  if _, err := client.Ping(context.Background()).Result(); err != nil {
+    panic("🟥 Unable to ping redis database 🟥")
+  }
+
+  return client
+}
+
+// ### ### ### Jwt ### ### ###
+// GetJWTSecret get secret from environment
+func GetJWTSecret() []byte {
+  secret := os.Getenv("JWT_KEY")
+  return []byte(secret)
 }
 
 // Create instances
