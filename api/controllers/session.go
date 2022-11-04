@@ -5,7 +5,9 @@ import(
   "time"
   "net/http"
   "github.com/labstack/echo/v4"
+  "github.com/golang-jwt/jwt/v4"
   "github.com/SilviaPabon/buenavida-backend/interfaces"
+  "github.com/SilviaPabon/buenavida-backend/configs"
   "github.com/SilviaPabon/buenavida-backend/models"
   "github.com/SilviaPabon/buenavida-backend/utils"
 )
@@ -108,5 +110,41 @@ func HandleLogin(c echo.Context) error {
     Error: false, 
     Message: "User authenticated successfully",
     User: publicUser,
+  })
+}
+
+// HandleWhoAmI Get user session information from access token
+func HandleWhoAmI(c echo.Context) error {
+  // Get token from cookie
+  cookie, _ := c.Cookie("access-token")
+  token := cookie.Value
+  claims := &interfaces.JWTCustomClaims{}
+
+  jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error){
+    return configs.GetJWTSecret(), nil
+  })
+
+  // Query database from user email
+  user, err := models.GetUserFromMail(claims.Email)
+
+  if err != nil {
+    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Unable to get user information.",
+    })
+  }
+
+  // Get only "public" fields
+  puser := interfaces.PublicUser{
+    ID: user.ID, 
+    Firstname: user.Firstname, 
+    Lastname: user.Lastname, 
+    Email: user.Email,
+  }
+
+  return c.JSON(http.StatusOK, interfaces.LoginResponse{
+    Error: false, 
+    Message: "OK", 
+    User: puser,
   })
 }
