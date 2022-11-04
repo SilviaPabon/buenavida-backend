@@ -10,14 +10,6 @@ import(
   "github.com/SilviaPabon/buenavida-backend/utils"
 )
 
-// HandlePing (Temporal function)
-func HandlePing(c echo.Context) error {
-  return c.JSON(http.StatusOK, interfaces.GenericResponse{
-    Error: true, 
-    Message: "Pong",
-  })
-}
-
 // HandleLogin login
 func HandleLogin(c echo.Context) error {
   // Get json payload
