@@ -43,3 +43,21 @@ FAVORITES{
 }
 
 ```
+
+## Mongo (non-relationsl) database: 
+
+
+Here we store our products and it's images in two collections:
+
+### Products collection: 
+
+| Serial | Name                     | Image              |  Units | Price | Discount | Annotations | Description |
+|--------|--------------------------|--------------------|--------|-------|----------|-------------|-------------|
+| 1      | Aceite esencial de clavo | /products/image/1  |  12ML  | 7.99  | 0        | 665,83 €/L  | El aceite...|
+
+### Images collection:
+
+| Serial | Image                          |
+|--------|--------------------------------|
+| 1      | https://i.ibb.co/jGc94N2/1.jpg |
+
