@@ -70,3 +70,16 @@ Here we store our products and it's images in two collections:
   "serial": 1, 
   "image": "https://i.ibb.co/jGc94N2/1.jpg"
 ```
+
+## Redis (in-memory) store
+
+We use redis to store the valids refresh-tokens (as a whitelist): 
+
+```json
+{
+  "user1@gmail.com": "74b1e197-b140-48f8-9094-784c52f72dc7"
+  "user2@outlook.com": "54d96d51-9afd-43d4-8c88-7566b02d1e4f"
+}
+```
+
+**Note:** As you can see, we don't store the token string, instead, we store the token UUID which is crated along with the token. At this way, we can verify if some provided token is authentic and is not expired (**each token has a 12 hours TTL**).
