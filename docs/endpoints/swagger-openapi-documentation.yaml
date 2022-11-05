@@ -1,0 +1,452 @@
+openapi: 3.0.0
+
+info: 
+  title: Buenavida API
+  version: "1.0"
+
+paths: 
+  # *** *** *** ***
+  # USER ROUTES
+  /api/user:
+    post: 
+      tags:
+        - User
+      description: Creates a new user on database
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                firstname: 
+                  type: string
+                  example: "Kenya"
+                lastname: 
+                  type: string
+                  example: "Blick"
+                email:
+                  type: string
+                  example: "kenya_blick@foo.com"
+                password:
+                  type: string
+                  example: "K8c6PnrJZvMM_9C"
+        required: true
+      responses:
+        '200':
+          description: All the fields were ok and the user was successfully created on database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: 
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "User created successfully"
+        '400':
+          description: Json wasn't provided or validation result was incorrect.
+        '500':
+          description: Error when saving the user on database or generate password Hash.
+        '409':
+          description: The provided email already exist on database.
+  
+  # *** *** *** ***
+  # SESSION ROUTES
+  /api/session/login:
+    post:
+      tags: 
+        - Session
+      description: Get user information, access-token and refresh-token for client-side session management.
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "kenya_blick@foo.com"
+                password:
+                  type: string
+                  example: "K8c6PnrJZvMM_9C"
+        required: true
+      responses:
+        '200':
+          description: All the fields were ok and the tokens were seded as cookies.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "User authenticated successfully"
+                  user:
+                    type: object
+                    properties:
+                      id: 
+                        type: number
+                        example: 1
+                      firstname: 
+                        type: string
+                        example: "Kenya"
+                      lastname: 
+                        type: string
+                        example: "Blick"
+                      email:
+                        type: string
+                        example: "kenya_blick@foo.com"
+          headers:
+            access-token:
+              description: Contains the short-live access token. Send this cookie back in subsequent request.
+              schema:
+                type: string
+            refresh-token:
+              description: Contains the long-live refresh token. Send this cookie back ONLY for the /api/session/refresh route.
+              schema:
+                type: string
+        '400':
+          description: Mair or passwords were not provided or any other unexpected server error.
+        '404':
+          description: Doesn't found an user with the provider email on database.
+        '403':
+          description: Password was incorrect.
+  /api/session/whoami:
+    post:
+      tags:
+        - Session
+      description: Get the user information from the access-token.
+      parameters: 
+        - name: access-token
+          in: cookie
+          description: Access token cookie must be provided
+          schema:
+            type: string
+          required: true
+      responses:
+        '200': 
+          description: Access token is valid and gets back the user information
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  error: 
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "OK"
+                  user: 
+                    type: object
+                    properties:
+                      id: 
+                        type: number
+                        example: 1
+                      firstname: 
+                        type: string
+                        example: "Kenya"
+                      lastname: 
+                        type: string
+                        example: "Blick"
+                      email:
+                        type: string
+                        example: "kenya_blick@foo.com"
+        '500':
+          description: Error when decoding the access token or any other unexpected error.
+        '403':
+          description: access-token cookie was not provided or token is not valid or expired.
+          
+  # *** *** *** ***
+  # PRODUCTS ROUTES
+  /api/products:
+    get:
+      tags:
+        - Products
+      description: Get all the products from database
+      responses:
+        '200':
+          description: All is ok and the requester gets the entire products collection
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: false
+                  message: 
+                    type: string
+                    example: "OK"
+                  products:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/Product'
+        '500':
+          description: Unexpected error or some problem with the database.
+  /api/products/{page}:
+    get:
+      tags:
+        - Products
+      description: Get the given page if exists. Each page can have a max of 12 products.
+      parameters:
+        - in: path
+          name: page
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: The given page exists, so, products are sended as a JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: 
+                    type: boolean
+                    example: false
+                  message: 
+                    type: string
+                    example: "OK"
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        '400': 
+          description: The given page is not valid. E.g, is a negative number or NaN.
+        '404':
+          description: The given page is valid but is empty.
+        '500':
+          description: Unexpected error or problem with the database.
+  /api/products/search:
+    post:
+      tags:
+        - Products
+      description: Search products by text. This appliest to the product's title and product's description.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search-criteria:
+                  type: string
+                  example: 'Aceite'
+        required: true
+      responses:
+        '200':
+          description: Successfully gets the videos filtered by the given text.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: false
+                  message: 
+                    type: string
+                    example: "OK"
+                  products:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/Product'
+        '400': 
+          description: Search criteria was not provided or was empty.
+        '500':
+          description: Unexpected error or problem with the database.
+  /api/products/image/{serial}:
+    get: 
+      tags: 
+        - Products
+      description: Get the image url for the product with the given serial.
+      parameters:
+        - in: path
+          name: serial
+          schema:
+            type: integer
+          required: true
+      responses: 
+        '200':
+          description: Successfully gets the product image url.
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: false
+                  message: 
+                    type: string
+                    example: "OK"
+                  image:
+                    type: string
+                    example: "https://i.ibb.co/jGc94N2/1.jpg"
+        '400':
+          description: The given serial wasn't a possitive number.
+        '404':
+          description: Doesn't found an image for the product with the given id.
+  /api/product/{id}:
+    get:
+      tags:
+        - Products
+      description: Get the detais for the product by the given id.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          example: "635dde978afe6e72a5e26aa1"
+      responses:
+        '200': 
+          description: Successfully gets the product's details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: 
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "OK"
+                  product: 
+                    $ref: '#/components/schemas/Product'
+        '400':
+          description: The provided product id is not valid.
+        '500':
+          description: Unexpected error or problemn with the database.
+
+  # *** *** *** ***
+  # CART ROUTES
+  /api/cart:
+    post:
+      tags: 
+        - Cart
+      description: Add some item to the user cart from it's product id.
+      parameters: 
+        - name: access-token
+          in: cookie
+          description: Access token cookie must be provided
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id: 
+                  type: string
+                  example: "635f406d344c343aabfee5f1"
+        required: true
+      responses:
+        '200': 
+          description: Successfully adds the product to the user cart.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: 
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Product added to the cart successfully"
+        '403':
+          description: access-token cookie was not provided or token is not valid or expired.
+        '400':
+          description: Provided product id is not valid.
+        '404':
+          description: Provided product id is valid but doesn't found any product on database with that id.
+        '500':
+          description: Unexpected error or problem with the database.
+    put:
+      tags: 
+        - Cart
+      description: Updates the amount of some product on user cart.
+      parameters: 
+        - name: access-token
+          in: cookie
+          description: Access token cookie must be provided
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id: 
+                  type: string
+                  example: "635f406d344c343aabfee5f1"
+                amount: 
+                  type: number
+                  example: 4
+        required: true
+      responses:
+        '200': 
+          description: Successfully updates the cart.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: 
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Cart pdated successfully"
+        '403':
+          description: access-token cookie was not provided or token is not valid or expired.
+        '400':
+          description: Provided product id is not valid.
+        '404':
+          description: Provided product id is valid but doesn't found any product on database with that id.
+        '500':
+          description: Unexpected error or problem with the database.
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id: 
+          type: string
+          example: "635dde978afe6e72a5e26a9d"
+        serial: 
+          type: number
+          example: 1
+        name: 
+          type: string
+          example: "Aceite esencial de clavo"
+        image:
+          type: string
+          example: "/products/image/1"
+        units:
+          type: string
+          example: "12ML"
+        annotations: 
+          type: string
+          example: "665,83 €/L"
+        discount:
+          type: number
+          example: 10
+        price:
+          type: number
+          example: 7.99
+        description:
+          type: string
+          example: "El aceite esencial de clavo es conocido por sus increíbles propiedades antimicrobianas."
