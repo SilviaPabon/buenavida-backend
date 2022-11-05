@@ -1,11 +1,11 @@
 package models
 
 import (
-	// "fmt" 
+	// "fmt"
 	"context"
+	"errors"
 	"log"
 	"time"
-	"errors"
 
 	"github.com/SilviaPabon/buenavida-backend/configs"
 	"github.com/SilviaPabon/buenavida-backend/interfaces"
@@ -35,36 +35,36 @@ func SaveUser(u *interfaces.User) (r bool) {
 }
 
 // GetUserFromMail get firstname, lastname, mail and password from given mail
-func GetUserFromMail(mail string) ( interfaces.User, error ){
-  ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-  defer cancel()
+func GetUserFromMail(mail string) (interfaces.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-  var user interfaces.User
+	var user interfaces.User
 
-  // Get user from database
-  query := `SELECT id, name, lastname, mail, password FROM USERS WHERE UPPER(USERS.mail) = UPPER($1) LIMIT 1`
+	// Get user from database
+	query := `SELECT id, name, lastname, mail, password FROM USERS WHERE UPPER(USERS.mail) = UPPER($1) LIMIT 1`
 
-  rows, err := conn.QueryContext(ctx, query, mail)
-  defer rows.Close()
+	rows, err := conn.QueryContext(ctx, query, mail)
+	defer rows.Close()
 
-  if err != nil {
-    return interfaces.User{}, err
-  }
+	if err != nil {
+		return interfaces.User{}, err
+	}
 
-  // Parse user
-  for rows.Next(){
-    err = rows.Scan(&user.ID, &user.Firstname, &user.Lastname, &user.Email, &user.Password)
+	// Parse user
+	for rows.Next() {
+		err = rows.Scan(&user.ID, &user.Firstname, &user.Lastname, &user.Email, &user.Password)
 
-    if err != nil {
-      return interfaces.User{}, err
-    }
-  }
+		if err != nil {
+			return interfaces.User{}, err
+		}
+	}
 
-  if user.ID == 0 || user.Firstname == "" || user.Lastname == "" || user.Email == "" || user.Password == "" {
-    return interfaces.User{}, errors.New("Not found")
-  } 
+	if user.ID == 0 || user.Firstname == "" || user.Lastname == "" || user.Email == "" || user.Password == "" {
+		return interfaces.User{}, errors.New("Not found")
+	}
 
-  return user, nil
+	return user, nil
 }
 
 // FindByEmail search an user by mail
@@ -92,4 +92,31 @@ func FindByEmail(email string) (succ bool) {
 	}
 
 	return false
+}
+
+func AddFavorites(userId int, idArticle string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Verify if the product already exists
+	query := `SELECT COUNT("idUser") AS count FROM favorites WHERE
+	    "idUser" = $1 AND "idArticle" = $2;`
+
+	row := conn.QueryRowContext(ctx, query, userId, idArticle)
+	var count int
+	err := row.Scan(&count)
+
+	if err != nil {
+		return err
+	}
+
+	// ### #### ### Insert or update as needed
+	if count == 0 {
+		query = `INSERT INTO favorites ("idUser", "idArticle")
+	    VALUES ($1, $2);`
+		row = conn.QueryRowContext(ctx, query, userId, idArticle)
+		return row.Err() // Returns nil or error if some error exists
+	} else {
+		return interfaces.ErrAlreadyInFavorites
+	}
 }

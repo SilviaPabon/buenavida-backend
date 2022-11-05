@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/SilviaPabon/buenavida-backend/controllers"
+	"github.com/SilviaPabon/buenavida-backend/middlewares"
 	"github.com/labstack/echo/v4"
 )
 
@@ -14,4 +15,6 @@ func SetupUserRoutes(e *echo.Echo) {
 
 	//e.GET("/api/user/:id", controllers.HandleUserGet)
 	e.POST("/api/user", controllers.HandleUserPost)
+	e.POST("/api/user/favorites", controllers.FavoritesPost, middlewares.MustProvideAccessToken)
+	//e.GET("/api/user/favorites", controllers.FavoritesGET, middlewares.MustProvideAccessToken)
 }
