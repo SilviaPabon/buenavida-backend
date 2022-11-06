@@ -24,12 +24,6 @@ type LoginResponse struct {
 	User    PublicUser `json:"user"`
 }
 
-type GenericFavoriteResponse struct {
-	Error    bool    `json:"error"`
-	Message  string  `json:"message"`
-	Favorite Article `json:"product"`
-}
-
 type FavoritesResponse struct {
 	Error     bool     `json:"error"`
 	Message   string   `json:"message"`
