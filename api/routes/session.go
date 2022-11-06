@@ -10,5 +10,5 @@ import (
 func SetupSessionRoutes(e *echo.Echo) {
 	e.POST("/api/session/login", controllers.HandleLogin)
 	e.GET("/api/session/whoami", controllers.HandleWhoAmI, middlewares.MustProvideAccessToken)
-	e.POST("/api/session/refresh", controllers.HandleRefresh, middlewares.MustProvideRefreshToken)
+	e.GET("/api/session/refresh", controllers.HandleRefresh, middlewares.MustProvideRefreshToken)
 }
