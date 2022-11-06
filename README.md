@@ -32,7 +32,7 @@ From the `bulkdata/` folder, create a `.env`file and define the following values
 MONGO_USER=admin
 MONGO_PASSWORD=admin
 MONGO_HOST=localhost
-MONGO_PORT=27018
+MONGO_PORT=27017
 ```
 
 ### Setup postgres database
