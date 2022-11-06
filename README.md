@@ -14,7 +14,7 @@ From the `api/` folder, create a `.env` file and define the following values (**
 MONGO_USER=admin
 MONGO_PASSWORD=admin
 MONGO_HOST=localhost
-MONGO_PORT=27018
+MONGO_PORT=27017
 PG_USER=admin
 PG_PASSWORD=admin
 PG_HOST=localhost
