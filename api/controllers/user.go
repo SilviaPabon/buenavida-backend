@@ -136,3 +136,28 @@ func FavoritesPost(c echo.Context) error {
 	})
 
 }
+
+func FavoritesGET(c echo.Context) error {
+	// Get user id from token
+	cookie, _ := c.Cookie("access-token")
+	token := cookie.Value
+	claims := &interfaces.JWTCustomClaims{}
+	jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+		return configs.GetJWTSecret(), nil
+	})
+
+	favorites, err := models.FavoritesGET(claims.ID)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Unable to get user information.",
+		})
+	}
+
+	return c.JSON(http.StatusOK, interfaces.FavoritesResponse{
+		Error:     false,
+		Message:   "OK",
+		Favorites: favorites,
+	})
+}

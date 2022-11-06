@@ -21,7 +21,7 @@ func SaveUser(u *interfaces.User) (r bool) {
 	defer cancel()
 
 	query := `INSERT INTO users (name, lastname, mail, password)
-              VALUES ($1, $2, $3, $4);
+            VALUES ($1, $2, $3, $4);
             `
 	row := conn.QueryRowContext(
 		ctx, query, u.Firstname, u.Lastname, u.Email, u.Password,
@@ -119,4 +119,32 @@ func AddFavorites(userId int, idArticle string) error {
 	} else {
 		return interfaces.ErrAlreadyInFavorites
 	}
+}
+
+func FavoritesGET(idUser int) ([]string, error) {
+	//Search DataBase
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var Favoritesgetid interfaces.Favorite
+
+	query := `SELECT "idArticle" FROM favorites WHERE "idUser" = $1`
+
+	row, err := conn.QueryContext(ctx, query, idUser)
+	defer row.Close()
+
+	if err != nil {
+		return []string{}, err
+	}
+
+	favoriteArray := []string{}
+	for row.Next() {
+		err = row.Scan(&Favoritesgetid.FavoriteId)
+		favoriteArray = append(favoriteArray, Favoritesgetid.FavoriteId)
+		if err != nil {
+			return []string{}, err
+		}
+	}
+
+	return favoriteArray, nil
 }
