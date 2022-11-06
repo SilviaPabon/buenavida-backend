@@ -13,7 +13,7 @@ type LoginPayload struct {
 	Password string `json:"password"`
 }
 
-type AddToCartPayload struct {
+type ProductIdPayload struct {
 	Id primitive.ObjectID `bson:"_id, omitempty" json:"id"`
 }
 

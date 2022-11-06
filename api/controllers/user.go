@@ -77,7 +77,7 @@ func HandleUserPost(c echo.Context) (err error) {
 }
 
 func FavoritesPost(c echo.Context) error {
-	payload := new(interfaces.AddToCartPayload)
+	payload := new(interfaces.ProductIdPayload)
 
 	if err := c.Bind(payload); err != nil {
 		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
@@ -120,7 +120,7 @@ func FavoritesPost(c echo.Context) error {
 		case interfaces.ErrAlreadyInFavorites:
 			return c.JSON(http.StatusConflict, interfaces.GenericResponse{
 				Error:   true,
-				Message: "Product already exist",
+				Message: "Product is already on user favorites.",
 			})
 		default:
 			return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
