@@ -82,4 +82,4 @@ We use redis to store the valids refresh-tokens (as a whitelist):
 }
 ```
 
-**Note:** As you can see, we don't store the token string, instead, we store the token UUID which is crated along with the token. At this way, we can verify if some provided token is authentic and is not expired (**each token has a 12 hours TTL**).
+**Note:** As you can see, we don't store the token string, instead, we store the token UUID which is crated along with the token. At this way, we can verify if some provided token is authentic and is not expired (**each token has a 6 hours TTL**).
