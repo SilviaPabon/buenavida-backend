@@ -13,15 +13,17 @@ type LoginPayload struct {
 	Password string `json:"password"`
 }
 
-type AddToCartPayload struct {
+type FilterProducts struct {
+	From     float32 `json:"from"`
+	To       float32 `json:"to"`
+	Criteria string  `json:"search_criteria"`
+}
+
+type ProductIdPayload struct {
 	Id primitive.ObjectID `bson:"_id, omitempty" json:"id"`
 }
 
 type UpdateCartPayload struct {
 	Id     primitive.ObjectID `bson:"_id, omitempty" json:"id"`
 	Amount int                `json:"amount"`
-}
-
-type DeleteCart struct {
-	Id primitive.ObjectID `bson:"_id, omitempty" json:"id"`
 }

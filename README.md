@@ -1,90 +1,82 @@
 # Buenavida back-end
 
-## Create .env file
+📜 You can find more documentation on `/docs` folder.
 
-Create a `.env` file inside `api/` folder. You should specify the following values:
+## Setup
 
-```
-MONGO_USER=youruser
-MONGO_PASSWORD=yourpassword
-MONGO_HOST=yourhost
-MONGO_PORT=yourport
-PG_USER=youruser
-PG_PASSWORD=yourpassword
-PG_HOST=yourhost
-PG_PORT=yourport
-REDIS_HOST=yourhost
-REDIS_PORT=yourport
-REDIS_DATABASE=yourdatabase
-JWT_KEY=yoursecret
-```
+To start the project at the first time:
 
-If you want to use the provided docker-compose file as development environment, your `MONGO_USER`, `MONGO_PASSWORD`, `PG_USER` and `PG_PASSWORD` are all `admin` and all the hosts are `localhost`.
+### Create the `.env` files:
 
-**Recommended**: Use some kind of hash / MD5 as JWT_KEY.
-
-## Build docker images
-
-Build docker-compose file
+From the `api/` folder, create a `.env` file and define the following values (**for development environment using the provided `docker-compose` file):
 
 ```
-docker-compose build
+MONGO_USER=admin
+MONGO_PASSWORD=admin
+MONGO_HOST=localhost
+MONGO_PORT=27017
+PG_USER=admin
+PG_PASSWORD=admin
+PG_HOST=localhost
+PG_PORT=5432
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=admin
+REDIS_DATABASE=0
+JWT_KEY={4Z!502lmtA4Guo6shSnaC+(8$bpR4Q+
 ```
 
-Run docker-compose file
+From the `bulkdata/` folder, create a `.env`file and define the following values (**for development environment using the provided `docker-compose` file):
 
 ```
+MONGO_USER=admin
+MONGO_PASSWORD=admin
+MONGO_HOST=localhost
+MONGO_PORT=27017
+```
+
+### Setup postgres database
+
+Start docker containers: 
+
+```bash
 docker-compose up
 ```
 
-You should see the following messages on `buenavida-api` docker console: 
+The **first time** you start the docker-compose file, run the following commands to create the database and it's tables:
 
-```
-🟩 Connected to mongo 🟩
-```
+1. Create an interactive shell into the postgres container:
 
-```
-🐘 Connected to postgresSQL
-```
-
-The **first time** you start the docker-compose file, you probably will see a postgres connection error on `buenavida-api` docker console. Follow this steps to fix it:
-
-1. Create an interactive shell into postgres container: 
-
-```
+```bash
 docker exec -it $(docker ps --filter NAME=pg_database --format "{{.ID}}") /bin/bash
 ```
 
-2. Move to files folder:
+2. Execute the init.sql script:
 
-```
-cd files
-```
-
-3. Execute init.sql script: 
-
-```
-psql -U admin -a -f ./init.sql
+```bash
+psql -U admin -a -f files/init.sql
 ```
 
-4. Finally, restart the docker-compose (`Ctrol + C`, `docker-compose up`).
+3. Stop and restart the container (`Ctrol + C`, `docker-compose up`).
 
-## Start development server
+### Start development environment
 
-1. Install air package: 
+1. Run the docker containers:
 
-Read [here](https://github.com/cosmtrek/air) for more information or troubleshooting.
-
+```bash
+docker-compose up
 ```
+
+2. Start the golang api: 
+
+You have to install [air](https://github.com/cosmtrek/air) to complete the next step:
+
+```bash
 go install github.com/cosmtrek/air@latest
 ```
 
-2. Run listen script: 
+**From `/api` folder:**
 
-
-From /api folder:
-
-```
+```bash
 ./listen.sh
-
 ```
