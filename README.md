@@ -19,6 +19,7 @@ PG_USER=admin
 PG_PASSWORD=admin
 PG_HOST=localhost
 PG_PORT=5432
+PG_DATABASE=buenavida
 REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=admin
