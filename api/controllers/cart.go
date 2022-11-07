@@ -122,3 +122,47 @@ func HandleCartPut(c echo.Context) error {
     Message: "Cart updated successfully",
   })
 }
+
+// HandleOrderPost creates an order from the items on cart
+func HandleOrderPost(c echo.Context) error {
+  // Get user id from access token
+  cookie, _ := c.Cookie("access-token")
+  token := cookie.Value
+  claims := &interfaces.JWTCustomClaims{}
+  jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error){
+    return configs.GetJWTSecret(), nil
+  })
+
+  // Validate cart length is greater than zero
+  cartLength, err := models.GetCartLength(claims.ID) 
+
+  if err != nil {
+    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Unable to get user cart from database",
+    })
+  }
+
+  if cartLength <= 0 {
+    return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Doesn't found any product on user cart.",
+    })
+  }
+
+  // Call the stored procedure
+  err = models.CreateOrder(claims.ID)
+
+  if err != nil {
+    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Unable to create the order",
+    })
+  }
+
+  return c.JSON(http.StatusOK, interfaces.GenericResponse{
+    Error: false, 
+    Message: "Order was created successfully",
+  })
+
+}
