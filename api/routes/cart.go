@@ -7,13 +7,13 @@ import (
 )
 
 // SetupCartRoutes create an manage cart routes
-func SetupCartRoutes(e *echo.Echo){
-  // Add a new product to the cart
-  e.POST("/api/cart", controllers.HandleCartPost, middlewares.MustProvideAccessToken)
-  // Update the amount of some product in the cart
-  e.PUT("/api/cart", controllers.HandleCartPut, middlewares.MustProvideAccessToken)
-  // Create an order from the cart items
-  e.POST("/api/order", controllers.HandleOrderPost, middlewares.MustProvideAccessToken)
-  //Delete cart
+func SetupCartRoutes(e *echo.Echo) {
+	// Add a new product to the cart
+	e.POST("/api/cart", controllers.HandleCartPost, middlewares.MustProvideAccessToken)
+	// Update the amount of some product in the cart
+	e.PUT("/api/cart", controllers.HandleCartPut, middlewares.MustProvideAccessToken)
+	// Create an order from the cart items
+	e.POST("/api/order", controllers.HandleOrderPost, middlewares.MustProvideAccessToken)
+	//Delete cart
 	e.DELETE("/api/cart", controllers.DeleteCartProduct, middlewares.MustProvideAccessToken)
 }

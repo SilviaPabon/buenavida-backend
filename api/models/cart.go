@@ -42,7 +42,6 @@ func AddProductToCart(userId int, productId string) error {
 		row = pg.QueryRowContext(ctx, query, userId, productId)
 		return row.Err()
 	}
-
 }
 
 // UpdateProductInCart Update the amount of some product on database
@@ -83,62 +82,40 @@ func DeleteCartProduct(idUser int, idArticle string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// Exist product
-	query := `SELECT COUNT("idUser") AS count FROM cart WHERE
-	    "idUser" = $1 AND "idArticle" = $2;`
-
-	DeleteCartProduct := `DELETE FROM "cart" WHERE "idUser" = $1`
-	_, err := pg.Exec(DeleteCartProduct, 1)
-
-	row := pg.QueryRowContext(ctx, query, DeleteCartProduct, idUser, idArticle)
-	var id int
-
-	if err != nil {
-		return err
-	}
-
-	if id != 0 {
-		query := `SELECT COUNT("idUser") AS count FROM cart WHERE
-    "idUser" = $1 AND "idArticle" = $2;`
-		row = pg.QueryRowContext(ctx, query, idUser, idArticle, 1)
-		return row.Err()
-	} else {
-		DeleteCartProduct = `DELETE FROM "cart"
-	    WHERE "idUser" = $1`
-		row = pg.QueryRowContext(ctx, query, idUser, idArticle)
-		return row.Err()
-	}
+	query := `DELETE FROM cart  WHERE "idUser" = $1 AND "idArticle" = $2`
+	row := pg.QueryRowContext(ctx, query, idUser, idArticle)
+	return row.Err()
 
 }
 
 // GetCartLength Gets the user cart lenght
 func GetCartLength(userId int) (int, error) {
-  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
-  defer cancel()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-  // Prepare query
-  query := `SELECT COUNT("idUser") AS count FROM CART WHERE
+	// Prepare query
+	query := `SELECT COUNT("idUser") AS count FROM CART WHERE
 	    "idUser" = $1;`
-  
-  // Make the request
-  row := pg.QueryRowContext(ctx, query, userId)
-  var count int
-  err := row.Scan(&count)
 
-  if err != nil {
-    return 0, err
-  }
+	// Make the request
+	row := pg.QueryRowContext(ctx, query, userId)
+	var count int
+	err := row.Scan(&count)
 
-  return count, nil
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }
 
 // CreateOrder Calls the stored procedure and creates the order from the user cart
-func CreateOrder(userId int) (error) {
-  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
-  defer cancel()
+func CreateOrder(userId int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-  // Prepare query
-  query := `CALL make_order($1)`
-  row := pg.QueryRowContext(ctx, query, userId)
-  return row.Err() // Returns error if any
+	// Prepare query
+	query := `CALL make_order($1)`
+	row := pg.QueryRowContext(ctx, query, userId)
+	return row.Err() // Returns error if any
 }

@@ -126,7 +126,7 @@ func HandleCartPut(c echo.Context) error {
 
 func DeleteCartProduct(c echo.Context) error {
 
-	payload := new(interfaces.DeleteCart)
+	payload := new(interfaces.ProductIdPayload)
 
 	if err := c.Bind(payload); err != nil {
 		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
@@ -141,14 +141,6 @@ func DeleteCartProduct(c echo.Context) error {
 			Message: "Provided object id is emtpy or not valid",
 		})
 	}
-	_, err := models.GetDetailsFromID(payload.Id.Hex())
-
-	if err != nil {
-		return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
-			Error:   true,
-			Message: "Product was not found.",
-		})
-	}
 
 	// Get user id from token
 	cookie, _ := c.Cookie("access-token")
@@ -159,7 +151,7 @@ func DeleteCartProduct(c echo.Context) error {
 	})
 
 	// Save on database
-	err = models.DeleteCartProduct(claims.ID, payload.Id.Hex())
+	err := models.DeleteCartProduct(claims.ID, payload.Id.Hex())
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
@@ -173,46 +165,46 @@ func DeleteCartProduct(c echo.Context) error {
 		Message: "Product delete to the cart successfully",
 	})
 }
-  
+
 // HandleOrderPost creates an order from the items on cart
 func HandleOrderPost(c echo.Context) error {
-  // Get user id from access token
-  cookie, _ := c.Cookie("access-token")
-  token := cookie.Value
-  claims := &interfaces.JWTCustomClaims{}
-  jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error){
-    return configs.GetJWTSecret(), nil
-  })
+	// Get user id from access token
+	cookie, _ := c.Cookie("access-token")
+	token := cookie.Value
+	claims := &interfaces.JWTCustomClaims{}
+	jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+		return configs.GetJWTSecret(), nil
+	})
 
-  // Validate cart length is greater than zero
-  cartLength, err := models.GetCartLength(claims.ID) 
+	// Validate cart length is greater than zero
+	cartLength, err := models.GetCartLength(claims.ID)
 
-  if err != nil {
-    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
-      Error: true, 
-      Message: "Unable to get user cart from database",
-    })
-  }
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Unable to get user cart from database",
+		})
+	}
 
-  if cartLength <= 0 {
-    return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
-      Error: true, 
-      Message: "Doesn't found any product on user cart.",
-    })
-  }
+	if cartLength <= 0 {
+		return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Doesn't found any product on user cart.",
+		})
+	}
 
-  // Call the stored procedure
-  err = models.CreateOrder(claims.ID)
+	// Call the stored procedure
+	err = models.CreateOrder(claims.ID)
 
-  if err != nil {
-    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
-      Error: true, 
-      Message: "Unable to create the order",
-    })
-  }
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Unable to create the order",
+		})
+	}
 
-  return c.JSON(http.StatusOK, interfaces.GenericResponse{
-    Error: false, 
-    Message: "Order was created successfully",
-  })
+	return c.JSON(http.StatusOK, interfaces.GenericResponse{
+		Error:   false,
+		Message: "Order was created successfully",
+	})
 }
