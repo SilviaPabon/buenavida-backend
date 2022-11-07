@@ -13,7 +13,8 @@ import (
 
 var modelsGetAllProducts = models.GetAllProducts
 var modelsGetProductsByPage = models.GetProductsByPage
-var modelsGetProductsFiltrated = models.GetProductsFiltrated
+
+//var modelsGetProductsFiltrated = models.GetProductsFiltrated
 
 // HandleProductsGet
 func HandleProductsGet(c echo.Context) error {
@@ -110,9 +111,40 @@ func HandleProductsSearch(c echo.Context) error {
 	})
 }
 
-/* func HandleProductsFilter(c echo.Context) error {
+func HandleProductsFilter(c echo.Context) error {
+	payload := new(interfaces.FilterProducts)
 
-} */
+	if err := c.Bind(payload); err != nil {
+		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Unable to process query. Try again and make sure from, to and search_criteria field are provided",
+		})
+	}
+
+	// Search in database
+	productsFiltrated, dberr := models.GetProductsFiltrated(payload.Criteria, payload.From, payload.To)
+
+	if dberr != nil {
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Unable to get response fron database",
+		})
+	}
+
+	if len(productsFiltrated) == 0 {
+		return c.JSON(http.StatusOK, interfaces.GenericResponse{
+			Error:   false,
+			Message: "Nothing found",
+		})
+	}
+
+	return c.JSON(http.StatusOK, interfaces.GenericProductsArrayResponse{
+		Error:    false,
+		Message:  "OK",
+		Products: productsFiltrated,
+	})
+
+}
 
 func GetFromID(c echo.Context) error {
 	//param id

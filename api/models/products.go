@@ -61,14 +61,24 @@ func GetProductsByPage(page int) (p []interfaces.Article, e error) {
 	return products, nil
 }
 
-func GetProductsFiltrated() (p []interfaces.Article, e error) {
+func GetProductsFiltrated(criteria string, min float32, max float32) (p []interfaces.Article, e error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	filter := bson.D{
+	filter := bson.D{{
+		"$or", bson.A{
+			bson.D{{"name", primitive.Regex{
+				Pattern: criteria,
+				Options: "gi",
+			}}},
+			bson.D{{"description", primitive.Regex{
+				Pattern: criteria,
+				Options: "gi",
+			}}},
+		}},
 		{"$and",
 			bson.A{
-				bson.D{{"price", bson.D{{"$gt", 7}}}},
-				bson.D{{"price", bson.D{{"$lte", 10}}}},
+				bson.D{{"price", bson.D{{"$gt", min}}}},
+				bson.D{{"price", bson.D{{"$lt", max}}}},
 			},
 		},
 	}
