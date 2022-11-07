@@ -1,9 +1,9 @@
 package interfaces
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"github.com/golang-jwt/jwt/v4"	
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // ### ### ###
@@ -40,20 +40,20 @@ type Order struct {
 }
 
 type User struct {
-	ID        int		     `json:"id, omitempty"`
-	Firstname string             `json:"firstname" validate:"required,min=1,max=125"`
-	Lastname  string             `json:"lastname" validate:"required,min=1,max=125"`
-	Password  string             `json:"password" validate:"required,min=8,max=250,containsany=!@#?*,containsany=1234567890,containsany=ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"`
-	Email     string             `json:"email" validate:"required,max=250,email"`
+	ID        int    `json:"id, omitempty"`
+	Firstname string `json:"firstname" validate:"required,min=1,max=125"`
+	Lastname  string `json:"lastname" validate:"required,min=1,max=125"`
+	Password  string `json:"password" validate:"required,min=8,max=250,containsany=!@#?*,containsany=1234567890,containsany=ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"`
+	Email     string `json:"email" validate:"required,max=250,email"`
 }
 
 // ### ### ###
 // Helpers interfaces
 type PublicUser struct {
-  ID 		int	`json:"id, omitempty"`
-  Firstname	string	`json:"firstname"`
-  Lastname	string	`json:"lastname"`
-  Email		string	`json:"email"`
+	ID        int    `json:"id, omitempty"`
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	Email     string `json:"email"`
 }
 
 type GenericResponse struct {
@@ -62,8 +62,12 @@ type GenericResponse struct {
 }
 
 type JWTCustomClaims struct {
-  jwt.RegisteredClaims // Default claims
-  ID		int		`json:"id"`
-  Email		string		`json:"email"`
-  UUID		uuid.UUID		`json:"uuid"`
+	jwt.RegisteredClaims           // Default claims
+	ID                   int       `json:"id"`
+	Email                string    `json:"email"`
+	UUID                 uuid.UUID `json:"uuid"`
+}
+
+type Favorite struct {
+	FavoriteId string
 }

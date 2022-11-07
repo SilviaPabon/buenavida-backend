@@ -77,3 +77,35 @@ func UpdateProductInCart(userId, amount int, productId string) error {
     return row.Err()
   }
 }
+
+// GetCartLength Gets the user cart lenght
+func GetCartLength(userId int) (int, error) {
+  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  defer cancel()
+
+  // Prepare query
+  query := `SELECT COUNT("idUser") AS count FROM CART WHERE
+	    "idUser" = $1;`
+  
+  // Make the request
+  row := pg.QueryRowContext(ctx, query, userId)
+  var count int
+  err := row.Scan(&count)
+
+  if err != nil {
+    return 0, err
+  }
+
+  return count, nil
+}
+
+// CreateOrder Calls the stored procedure and creates the order from the user cart
+func CreateOrder(userId int) (error) {
+  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  defer cancel()
+
+  // Prepare query
+  query := `CALL make_order($1)`
+  row := pg.QueryRowContext(ctx, query, userId)
+  return row.Err() // Returns error if any
+}

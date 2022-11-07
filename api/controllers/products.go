@@ -143,7 +143,6 @@ func HandleProductsFilter(c echo.Context) error {
 		Message:  "OK",
 		Products: productsFiltrated,
 	})
-
 }
 
 func GetFromID(c echo.Context) error {
@@ -151,7 +150,6 @@ func GetFromID(c echo.Context) error {
 	id := c.Param("id")
 
 	product, err := models.GetDetailsFromID(id)
-	fmt.Println(err)
 
 	if err != nil {
 		switch err {
