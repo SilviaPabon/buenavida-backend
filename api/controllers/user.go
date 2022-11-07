@@ -41,14 +41,14 @@ func HandleUserPost(c echo.Context) (err error) {
 	pass, err := utils.HashPassword([]byte(payload.Password))
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
 			Error:   true,
 			Message: "Unable to encrypt the password",
 		})
 	}
 
 	if models.FindByEmail(payload.Email) {
-		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+		return c.JSON(http.StatusConflict, interfaces.GenericResponse{
 			Error:   true,
 			Message: "This mail already exists",
 		})
