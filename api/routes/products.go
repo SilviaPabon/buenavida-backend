@@ -15,7 +15,7 @@ func SetupProductsRoutes(e *echo.Echo) {
 	// Search product fron text
 	e.POST("/api/products/search", controllers.HandleProductsSearch)
 	// Search
-	e.POST("/api/products/filtration", controllers.HandleProductsFilter)
+	e.POST("/api/products/filter", controllers.HandleProductsFilter)
 	// Get product image
 	e.GET("/api/products/image/:serial", controllers.HandleProductImageRequest)
 	//Get details product

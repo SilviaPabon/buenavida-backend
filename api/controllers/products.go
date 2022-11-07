@@ -132,7 +132,7 @@ func HandleProductsFilter(c echo.Context) error {
 	}
 
 	if len(productsFiltrated) == 0 {
-		return c.JSON(http.StatusOK, interfaces.GenericResponse{
+		return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
 			Error:   false,
 			Message: "Nothing found",
 		})
