@@ -13,6 +13,12 @@ type LoginPayload struct {
 	Password string `json:"password"`
 }
 
+type FilterProducts struct {
+	From     float32 `json:"from"`
+	To       float32 `json:"to"`
+	Criteria string  `json:"search_criteria"`
+}
+
 type ProductIdPayload struct {
 	Id primitive.ObjectID `bson:"_id, omitempty" json:"id"`
 }
