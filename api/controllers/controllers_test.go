@@ -15,6 +15,7 @@ import(
   "github.com/go-faker/faker/v4"
   "github.com/golang-jwt/jwt/v4"
   "github.com/stretchr/testify/require"
+  "go.mongodb.org/mongo-driver/bson/primitive"
   "github.com/SilviaPabon/buenavida-backend/configs" // db connection
   "github.com/SilviaPabon/buenavida-backend/interfaces"
 )
@@ -46,6 +47,24 @@ func setupPost(method, path string, payload interface{}) (echo.Context, *httptes
   w := httptest.NewRecorder()
   context := e.NewContext(r,w)
 
+  return context, w, r
+}
+
+// Helper function to create a post request with authentication
+func setupAuthenticatedPost(method, path string, payload interface {}, cookies ...*http.Cookie) (echo.Context, *httptest.ResponseRecorder, *http.Request) {
+  payloadBytes, _ := json.Marshal(payload)
+
+  e := echo.New()
+  r := httptest.NewRequest(method, path, bytes.NewBuffer(payloadBytes))
+  r.Header.Set("Content-Type", "application/json")
+  w := httptest.NewRecorder()
+
+  // set cookies
+  for _, cookie := range(cookies){
+    r.AddCookie(cookie)
+  }
+
+  context := e.NewContext(r, w)
   return context, w, r
 }
 
@@ -257,7 +276,7 @@ func TestProductDetailsSucess(t *testing.T){
 
   // IMPORTANT: This id can change if you run the bulkdata command again
   // So, replace it with a valid MongoID in your case
-  targetId := "635f406d344c343aabfee5f1"
+  targetId := "63672963967f1548b29a6ff1"
   context.SetParamValues(targetId)
 
   // Make request
@@ -489,6 +508,108 @@ func TestLoginSuccess(t *testing.T){
 
   // Remove user from database
   query := `DELETE FROM users WHERE "mail" = $1`
+  pg.QueryRowContext(ctx, query, randEmail)
+
+  // Remove entry from redis database
+  redis.Del(ctx, randEmail)
+}
+
+// #### #### #### #### ####
+// #### #### Cart #### ####
+// #### #### #### #### ####
+func TestCartSuccess(t *testing.T){
+  c := require.New(t)
+
+  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  defer cancel()
+
+  // *** Create a new user for the test ***
+  randEmail := faker.Email()
+  randPassword := faker.Password() + "@1"
+  user := interfaces.User{
+    Firstname: faker.FirstName(),
+    Lastname: faker.LastName(), 
+    Email: randEmail, 
+    Password: randPassword,
+  }
+
+  // Post the signup route
+  context, w, _ := setupPost(http.MethodPost, "/api/user", user)
+  err := HandleUserPost(context)
+  c.NoError(err)
+  c.Equal(http.StatusOK, w.Code)
+
+  // Obtain the user id
+  var id string
+  query := `SELECT "id" FROM users 
+	    WHERE "mail" = $1;`
+  
+  row := pg.QueryRowContext(ctx, query, randEmail)
+  err = row.Scan(&id)
+  c.NoError(err)
+
+  // *** Login with the new user ***
+  loginPayload := interfaces.LoginPayload{
+    Mail: randEmail, 
+    Password: randPassword,
+  }
+
+  // Post the login route
+  context, w, _ = setupPost(http.MethodPost, "/api/session/login", loginPayload)
+  err = HandleLogin(context)
+  c.NoError(err)
+
+  cookies := w.Result().Cookies() // Get the response cookies
+  c.Equal(2, len(cookies))
+
+  // *** Add a new item into the user cart (TEST POST) ***
+  // IMPORTANT: This id can change if you run the bulkdata command again
+  // So, replace it with a valid MongoID in your case
+  sid := "63672963967f1548b29a6ff2"
+  oid, _ := primitive.ObjectIDFromHex(sid)
+  addToCartPayload :=  interfaces.AddToCartPayload{
+    Id: oid,
+  }
+
+  context, w, _ = setupAuthenticatedPost(http.MethodPost, "/api/cart", addToCartPayload, cookies...)
+  err = HandleCartPost(context)
+  c.NoError(err)
+
+  c.Equalf(http.StatusOK, w.Code, fmt.Sprintf("Expected status code to be: %d but got: %d", http.StatusOK, w.Code))
+
+  // Validate the amount on user cart
+  query = `SELECT "amount" FROM cart 
+	    WHERE "idUser" = $1 AND "idArticle" = $2`
+  
+  var productsOnCart int
+  row = pg.QueryRowContext(ctx, query, id, sid)
+  err = row.Scan(&productsOnCart)
+  c.NoError(err)
+
+  c.Equalf(1, productsOnCart, fmt.Sprintf("Expected %d products on cart bout found: %d", 1, productsOnCart))
+
+  // *** Modify the amount of the product in the user cart (TEST PUT) ***
+  expectedNewAmount := 9
+  updateCartPayload := interfaces.UpdateCartPayload{
+    Id: oid, 
+    Amount: expectedNewAmount, // Update the amount to nine
+  }
+
+  context, w, _ = setupAuthenticatedPost(http.MethodPut, "/api/cart", updateCartPayload, cookies...)
+  err = HandleCartPut(context)
+  c.NoError(err)
+  
+  c.Equalf(http.StatusOK, w.Code, fmt.Sprintf("Expected status code to be: %d but got: %d", http.StatusOK, w.Code))
+  
+  // Validate the UPDATED amount on user cart
+  row = pg.QueryRowContext(ctx, query, id, sid)
+  err = row.Scan(&productsOnCart)
+  c.NoError(err)
+
+  c.Equalf(expectedNewAmount, productsOnCart, fmt.Sprintf("Expected %d products on cart bout found: %d", expectedNewAmount, productsOnCart))
+
+  // Remove testing values from database
+  query = `DELETE FROM users WHERE "mail" = $1`
   pg.QueryRowContext(ctx, query, randEmail)
 
   // Remove entry from redis database
