@@ -100,12 +100,12 @@ func GetCartLength(userId int) (int, error) {
 	return count, nil
 }
 
-func GetCartByUser(userId int) ([]interfaces.Cart_Items, error) {
+func GetCartByUser(userId int) ([]interfaces.CartItems, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var productCart interfaces.Cart_Items
-	var productsCart []interfaces.Cart_Items
+	var productCart interfaces.CartItems
+	var productsCart []interfaces.CartItems
 
 	// Prepare query, getting the cart of user
 	query := `SELECT * FROM CART WHERE "idUser" = $1;`
@@ -114,14 +114,14 @@ func GetCartByUser(userId int) ([]interfaces.Cart_Items, error) {
 	defer rows.Close()
 
 	if err != nil {
-		return []interfaces.Cart_Items{}, err
+		return []interfaces.CartItems{}, err
 	}
 
 	for rows.Next() {
 		err = rows.Scan(&productCart.Iduser, &productCart.ID, &productCart.Quantity)
 		productsCart = append(productsCart, productCart)
 		if err != nil {
-			return []interfaces.Cart_Items{}, err
+			return []interfaces.CartItems{}, err
 		}
 
 	}
