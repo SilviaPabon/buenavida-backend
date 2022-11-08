@@ -28,8 +28,9 @@ type ArticleImage struct {
 }
 
 type Cart_Items struct {
-	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id, omitempty"`
-	Quantity int8               `bson:"quantity" "json:"quantity"`
+	ID       string `bson:"_id,omitempty" json:"id, omitempty"`
+	Iduser   int8   `bson:"iduser" json:"iduser"`
+	Quantity int8   `bson:"quantity" "json:"quantity"`
 }
 
 type Order struct {
@@ -70,4 +71,12 @@ type JWTCustomClaims struct {
 
 type Favorite struct {
 	FavoriteId string
+}
+
+type CartVerbose struct {
+	Name     string  `json:"name"`
+	Units    string  `json:"units"`
+	Quantity int8    `json:"quantity"`
+	Price    float64 `json:"price"`
+	Image    string  `json:"image"`
 }

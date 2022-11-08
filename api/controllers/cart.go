@@ -2,6 +2,7 @@ package controllers
 
 import (
 	// "fmt"
+
 	"net/http"
 
 	"github.com/SilviaPabon/buenavida-backend/configs"
@@ -126,44 +127,92 @@ func HandleCartPut(c echo.Context) error {
 
 // HandleOrderPost creates an order from the items on cart
 func HandleOrderPost(c echo.Context) error {
-  // Get user id from access token
-  cookie, _ := c.Cookie("access-token")
-  token := cookie.Value
-  claims := &interfaces.JWTCustomClaims{}
-  jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error){
-    return configs.GetJWTSecret(), nil
-  })
+	// Get user id from access token
+	cookie, _ := c.Cookie("access-token")
+	token := cookie.Value
+	claims := &interfaces.JWTCustomClaims{}
+	jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+		return configs.GetJWTSecret(), nil
+	})
 
-  // Validate cart length is greater than zero
-  cartLength, err := models.GetCartLength(claims.ID) 
+	// Validate cart length is greater than zero
+	cartLength, err := models.GetCartLength(claims.ID)
 
-  if err != nil {
-    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
-      Error: true, 
-      Message: "Unable to get user cart from database",
-    })
-  }
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Unable to get user cart from database",
+		})
+	}
 
-  if cartLength <= 0 {
-    return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
-      Error: true, 
-      Message: "Doesn't found any product on user cart.",
-    })
-  }
+	if cartLength <= 0 {
+		return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Doesn't found any product on user cart.",
+		})
+	}
 
-  // Call the stored procedure
-  err = models.CreateOrder(claims.ID)
+	// Call the stored procedure
+	err = models.CreateOrder(claims.ID)
 
-  if err != nil {
-    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
-      Error: true, 
-      Message: "Unable to create the order",
-    })
-  }
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Unable to create the order",
+		})
+	}
 
-  return c.JSON(http.StatusOK, interfaces.GenericResponse{
-    Error: false, 
-    Message: "Order was created successfully",
-  })
+	return c.JSON(http.StatusOK, interfaces.GenericResponse{
+		Error:   false,
+		Message: "Order was created successfully",
+	})
 
+}
+
+// obtains the information from cart of a user
+func HandleCartGet(c echo.Context) error {
+	// Get user id from access token
+	cookie, _ := c.Cookie("access-token")
+	token := cookie.Value
+	claims := &interfaces.JWTCustomClaims{}
+	jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+		return configs.GetJWTSecret(), nil
+	})
+
+	var responseCart = []interfaces.CartVerbose{}
+	var productInfo = interfaces.CartVerbose{}
+
+	// Verify cart of user
+	userCart, err := models.GetCartByUser(claims.ID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Unable to get user cart from database",
+		})
+	}
+
+	if len(userCart) == 0 {
+		return c.JSON(http.StatusNotFound, interfaces.GenericCartProductsResponse{
+			Error:    false,
+			Message:  "Cart of user empty, nothing to show",
+			Products: responseCart,
+		})
+	}
+
+	//iterating each product
+	for _, product := range userCart {
+		rows, _ := models.GetDetailsFromID(product.ID)
+		productInfo.Name = rows.Name
+		productInfo.Units = rows.Units
+		productInfo.Quantity = product.Quantity
+		productInfo.Price = rows.Price
+		productInfo.Image = rows.Image
+		responseCart = append(responseCart, productInfo)
+	}
+
+	return c.JSON(http.StatusOK, interfaces.GenericCartProductsResponse{
+		Error:    false,
+		Message:  "Cart of user was generated succesfully",
+		Products: responseCart,
+	})
 }
