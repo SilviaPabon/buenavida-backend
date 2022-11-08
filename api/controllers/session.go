@@ -151,6 +151,7 @@ func HandleWhoAmI(c echo.Context) error {
 	})
 }
 
+// HandleRefresh creates a new access token if a valid refresh token was provided
 func HandleRefresh(c echo.Context) error {
 
 	cookie, _ := c.Cookie("refresh-token")
@@ -188,4 +189,12 @@ func HandleRefresh(c echo.Context) error {
 		Message: "OK",
 	})
 
+}
+
+// Send expired tokens and remove refresh token from redis
+func HandleLogout(c echo.Context) error {
+  return c.JSON(http.StatusOK, interfaces.GenericResponse{
+    Error: false, 
+    Message: "Route created",
+  })
 }
