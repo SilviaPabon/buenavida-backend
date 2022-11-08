@@ -1,7 +1,7 @@
 package models
 
 import (
-	"fmt"
+	// "fmt"
 	"context"
 	"errors"
 	"log"
@@ -198,8 +198,6 @@ func GetUserOrdersResume(userId int) ([]interfaces.OrderResume, error){
   ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
   defer cancel()
 
-  fmt.Println(userId)
-
   // *** Get orders list
   query := `SELECT "idOrder" FROM orders 
 	    WHERE "idUser" = $1`
@@ -217,7 +215,6 @@ func GetUserOrdersResume(userId int) ([]interfaces.OrderResume, error){
 
   for rows.Next() { // For each user order
     err = rows.Scan(&orderId)
-    fmt.Println(orderId)
 
     if err != nil {
       return []interfaces.OrderResume{}, err
