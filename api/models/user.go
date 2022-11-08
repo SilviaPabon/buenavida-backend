@@ -7,6 +7,8 @@ import (
 	"log"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/SilviaPabon/buenavida-backend/configs"
 	"github.com/SilviaPabon/buenavida-backend/interfaces"
 )
@@ -147,4 +149,46 @@ func FavoritesGET(idUser int) ([]string, error) {
 	}
 
 	return favoriteArray, nil
+}
+
+// GetDetailedFavorites return a list of favorites with it's title, price, etc.
+func GetDetailedFavorites(userId int) ([]interfaces.Article, error){
+  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  defer cancel()
+
+  // Get favorites list
+  var favoriteId string
+
+  query := `SELECT "idArticle" FROM favorites
+	    WHERE "idUser" = $1`
+
+  rows, err := conn.QueryContext(ctx, query, userId)
+  defer rows.Close()
+
+  if err != nil {
+    return []interfaces.Article{}, err
+  }
+
+  // Get favorites details
+  detailedFavorites := []interfaces.Article{}
+
+  for rows.Next() {
+    err = rows.Scan(&favoriteId)
+    
+    if err != nil {
+      return []interfaces.Article{}, err
+    }
+
+    mid, err := primitive.ObjectIDFromHex(favoriteId)
+    var product interfaces.Article
+    err = productsCollection.FindOne(ctx, bson.D{{"_id", mid}}).Decode(&product)
+
+    if err != nil {
+      return []interfaces.Article{}, err
+    }
+
+    detailedFavorites = append(detailedFavorites, product)
+  }
+
+  return detailedFavorites, nil
 }
