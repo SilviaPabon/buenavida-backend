@@ -189,3 +189,49 @@ func HandleRefresh(c echo.Context) error {
 	})
 
 }
+
+func HandleLogout(c echo.Context) error {
+
+	// Get json payload
+	var payload = new(interfaces.LoginPayload)
+	err := c.Bind(payload)
+
+	// Get user from database
+	user, err := models.GetUserFromMail(payload.Mail)
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
+			Error:   true,
+			Message: "User wasn't found",
+		})
+	}
+
+	// *** Create tokens ***
+	accessToken, _, ATerr := utils.CreateJWTAccessToken(&user)
+
+	if ATerr != nil {
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Unable to initialize authentication",
+		})
+	}
+
+	// *** Send tokens on cookies ***
+	// *** Prepare cookies ***
+	accessCookie := new(http.Cookie)
+	accessCookie.Name = "access-token"
+	accessCookie.Value = accessToken
+	// This should be equal to the one in utils.go file
+	accessCookie.Expires = time.Now().Add(5)
+	accessCookie.HttpOnly = true
+	accessCookie.Path = "/" // Valid for all paths
+
+	// *** Send cookies on response ***
+	c.SetCookie(accessCookie)
+
+	return c.JSON(http.StatusOK, interfaces.GenericResponse{
+		Error:   false,
+		Message: "Logout OK",
+	})
+
+}
