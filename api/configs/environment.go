@@ -9,7 +9,7 @@ import(
 func InitEnv(){
   // Try to get environment variables from system
   var done = true 
-  var secrets = []string{ os.Getenv("PG_USER"), os.Getenv("PG_PASSWORD"), os.Getenv("PG_HOST"), os.Getenv("PG_PORT"), os.Getenv("MONGO_USER"), os.Getenv("MONGO_PASSWORD"), os.Getenv("MONGO_HOST"), os.Getenv("MONGO_PORT"), os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"), os.Getenv("REDIS_PASSWORD"), os.Getenv("REDIS_DATABASE") , os.Getenv("JWT_KEY") }
+  var secrets = []string{ os.Getenv("PG_USER"), os.Getenv("PG_PASSWORD"), os.Getenv("PG_HOST"), os.Getenv("PG_PORT"), os.Getenv("PG_DATABASE"),os.Getenv("MONGO_USER"), os.Getenv("MONGO_PASSWORD"), os.Getenv("MONGO_HOST"), os.Getenv("MONGO_PORT"), os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"), os.Getenv("REDIS_PASSWORD"), os.Getenv("REDIS_DATABASE") , os.Getenv("JWT_KEY") }
 
   // Check if all the required variables were loaded
   for _, value := range(secrets) {
@@ -27,7 +27,7 @@ func InitEnv(){
   
   if !done {
     // Reload secrets
-    secrets = []string{ os.Getenv("PG_USER"), os.Getenv("PG_PASSWORD"), os.Getenv("PG_HOST"), os.Getenv("PG_PORT"), os.Getenv("MONGO_USER"), os.Getenv("MONGO_PASSWORD"), os.Getenv("MONGO_HOST"), os.Getenv("MONGO_PORT"), os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"), os.Getenv("REDIS_PASSWORD"), os.Getenv("REDIS_DATABASE"), os.Getenv("JWT_KEY") }
+    secrets = []string{ os.Getenv("PG_USER"), os.Getenv("PG_PASSWORD"), os.Getenv("PG_HOST"), os.Getenv("PG_PORT"), os.Getenv("PG_DATABASE"),os.Getenv("MONGO_USER"), os.Getenv("MONGO_PASSWORD"), os.Getenv("MONGO_HOST"), os.Getenv("MONGO_PORT"), os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"), os.Getenv("REDIS_PASSWORD"), os.Getenv("REDIS_DATABASE"), os.Getenv("JWT_KEY") }
 
     for _, value := range(secrets) {
       if value == ""{
@@ -46,8 +46,9 @@ func getPostgresURI() string{
   password := os.Getenv("PG_PASSWORD")
   host := os.Getenv("PG_HOST")
   port := os.Getenv("PG_PORT")
+  database := os.Getenv("PG_DATABASE")
 
-  URI := fmt.Sprintf("postgres://%s:%s@%s:%s/buenavida?sslmode=disable", user, password, host, port)
+  URI := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, database)
   return URI
 
 }
