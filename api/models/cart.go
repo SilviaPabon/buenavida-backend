@@ -1,11 +1,11 @@
 package models
 
-import(
-  // "fmt"
-  "context"
-  "time"
-  "github.com/SilviaPabon/buenavida-backend/configs"
-  // "github.com/SilviaPabon/buenavida-backend/interfaces"
+import (
+	// "fmt"
+	"context"
+	"time"
+
+	"github.com/SilviaPabon/buenavida-backend/configs"
 )
 
 // Mongodb collections
@@ -13,99 +13,132 @@ var pg = configs.ConnectToPostgres()
 
 // AddProductToCart Add a new product to the cart or update the current ammount
 func AddProductToCart(userId int, productId string) error {
-  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
-  defer cancel()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-  // ### ### ###
-  // Verify if the product already exists
-  query := `SELECT COUNT("idUser") AS count FROM cart WHERE
+	// ### ### ###
+	// Verify if the product already exists
+	query := `SELECT COUNT("idUser") AS count FROM cart WHERE
 	    "idUser" = $1 AND "idArticle" = $2;`
-  
-  row := pg.QueryRowContext(ctx, query, userId, productId)
-  var count int
-  err := row.Scan(&count)
 
-  if err != nil{
-    return err
-  }
+	row := pg.QueryRowContext(ctx, query, userId, productId)
+	var count int
+	err := row.Scan(&count)
 
-  // ### #### ### Insert or update as needed
-  if count == 0 {
-    query = `INSERT INTO cart ("idUser", "idArticle", "amount")
-	      VALUES ($1, $2, $3);` 
-    row = pg.QueryRowContext(ctx, query, userId, productId, 1)
-    return row.Err() // Returns nil or error if some error exists
-  }else{
-    query = `UPDATE cart 
+	if err != nil {
+		return err
+	}
+
+	// ### #### ### Insert or update as needed
+	if count == 0 {
+		query = `INSERT INTO cart ("idUser", "idArticle", "amount")
+	      VALUES ($1, $2, $3);`
+		row = pg.QueryRowContext(ctx, query, userId, productId, 1)
+		return row.Err() // Returns nil or error if some error exists
+	} else {
+		query = `UPDATE cart 
 	    SET "amount" = "amount" + 1
 	    WHERE "idUser" = $1 AND "idArticle" = $2`
-    row = pg.QueryRowContext(ctx, query, userId, productId)
-    return row.Err()
-  }
-
+		row = pg.QueryRowContext(ctx, query, userId, productId)
+		return row.Err()
+	}
 }
 
 // UpdateProductInCart Update the amount of some product on database
 func UpdateProductInCart(userId, amount int, productId string) error {
-  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
-  defer cancel()
-  
-  // ### ### ###
-  // Verify if the product already exists
-  query := `SELECT COUNT("idUser") AS count FROM cart WHERE
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// ### ### ###
+	// Verify if the product already exists
+	query := `SELECT COUNT("idUser") AS count FROM cart WHERE
 	    "idUser" = $1 AND "idArticle" = $2;`
-  
-  row := pg.QueryRowContext(ctx, query, userId, productId)
-  var count int
-  err := row.Scan(&count)
 
-  if err != nil{
-    return err
-  }
+	row := pg.QueryRowContext(ctx, query, userId, productId)
+	var count int
+	err := row.Scan(&count)
 
-  // ### ### ### Insert or update as needed
-  if count == 0 {
-    query = `INSERT INTO cart ("idUser", "idArticle", "amount")
+	if err != nil {
+		return err
+	}
+
+	// ### ### ### Insert or update as needed
+	if count == 0 {
+		query = `INSERT INTO cart ("idUser", "idArticle", "amount")
 	    VALUES ($1, $2, $3);`
-    row = pg.QueryRowContext(ctx, query, userId, productId, amount)
-    return row.Err()
-  }else{
-    query = `UPDATE cart
+		row = pg.QueryRowContext(ctx, query, userId, productId, amount)
+		return row.Err()
+	} else {
+		query = `UPDATE cart
 	    SET "amount" = $1
 	    WHERE "idUser" = $2 AND "idArticle" = $3`
-    row = pg.QueryRowContext(ctx, query, amount, userId, productId)
-    return row.Err()
-  }
+		row = pg.QueryRowContext(ctx, query, amount, userId, productId)
+		return row.Err()
+	}
+}
+
+func DeleteCartProduct(idUser int, idArticle string) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	query := `DELETE FROM cart  WHERE "idUser" = $1 AND "idArticle" = $2`
+	row := pg.QueryRowContext(ctx, query, idUser, idArticle)
+	return row.Err()
+
 }
 
 // GetCartLength Gets the user cart lenght
 func GetCartLength(userId int) (int, error) {
-  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
-  defer cancel()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-  // Prepare query
-  query := `SELECT COUNT("idUser") AS count FROM CART WHERE
+	// Prepare query
+	query := `SELECT COUNT("idUser") AS count FROM CART WHERE
 	    "idUser" = $1;`
-  
-  // Make the request
-  row := pg.QueryRowContext(ctx, query, userId)
-  var count int
-  err := row.Scan(&count)
 
-  if err != nil {
-    return 0, err
-  }
+	// Make the request
+	row := pg.QueryRowContext(ctx, query, userId)
+	var count int
+	err := row.Scan(&count)
 
-  return count, nil
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }
 
 // CreateOrder Calls the stored procedure and creates the order from the user cart
-func CreateOrder(userId int) (error) {
+func CreateOrder(userId int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Prepare query
+	query := `CALL make_order($1)`
+	row := pg.QueryRowContext(ctx, query, userId)
+	return row.Err() // Returns error if any
+}
+
+// SearchProductOnCart Returns if the product exists on the user cart
+func SearchProductOnCart(userId int, productId string)(bool, error){
   ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
   defer cancel()
 
-  // Prepare query
-  query := `CALL make_order($1)`
-  row := pg.QueryRowContext(ctx, query, userId)
-  return row.Err() // Returns error if any
+  query := `SELECT COUNT("idArticle") FROM cart
+	    WHERE "idUser" = $1 AND "idArticle" = $2`
+  
+  row := conn.QueryRowContext(ctx, query, userId, productId)
+  var count int
+  err := row.Scan(&count)
+
+  if err != nil{
+    return false, err
+  }
+
+  if count != 1 {
+    return false, nil
+  }
+
+  return true, nil
 }
