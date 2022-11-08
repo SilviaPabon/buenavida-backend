@@ -189,3 +189,21 @@ func HandleDetailedFavorites(c echo.Context) error {
     Favorites: favorites,
   })
 }
+
+// HandleGetOrders Get user orders resume
+func HandleGetOrders(c echo.Context) error {
+  // *** Get user data from token
+  // cookie, _ := c.Cookie("access-token")
+  // token := cookie.Value
+  // claims := &interfaces.JWTCustomClaims{}
+  // jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+  //   return configs.GetJWTSecret(), nil
+  // })
+
+  // *** Query database
+  return c.JSON(http.StatusOK, interfaces.GenericResponse{
+    Error: false, 
+    Message: "Ok",
+  })
+
+}
