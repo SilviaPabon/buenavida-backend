@@ -4,7 +4,7 @@ import (
 	// "fmt"
 
 	"net/http"
-
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/SilviaPabon/buenavida-backend/configs"
 	"github.com/SilviaPabon/buenavida-backend/interfaces"
 	"github.com/SilviaPabon/buenavida-backend/models"
@@ -126,17 +126,10 @@ func HandleCartPut(c echo.Context) error {
 }
 
 func DeleteCartProduct(c echo.Context) error {
+	id := c.Param("id")
+	mid, _ := primitive.ObjectIDFromHex(id)
 
-	payload := new(interfaces.ProductIdPayload)
-
-	if err := c.Bind(payload); err != nil {
-		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
-			Error:   true,
-			Message: "Unable to process request.",
-		})
-	}
-
-	if payload.Id.IsZero() { // Validate provided object id
+	if mid.IsZero() { // Validate provided object id
 		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
 			Error:   true,
 			Message: "Provided object id is emtpy or not valid",
@@ -152,7 +145,7 @@ func DeleteCartProduct(c echo.Context) error {
 	})
 
 	// Verify product exists on cart
-	exists, err := models.SearchProductOnCart(claims.ID, payload.Id.Hex())
+	exists, err := models.SearchProductOnCart(claims.ID, id)
 
 	if err != nil {
 	  return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
@@ -169,7 +162,7 @@ func DeleteCartProduct(c echo.Context) error {
 	}
 
 	// Delete from database
-	err = models.DeleteCartProduct(claims.ID, payload.Id.Hex())
+	err = models.DeleteCartProduct(claims.ID, id)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
