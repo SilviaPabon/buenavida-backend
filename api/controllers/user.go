@@ -178,16 +178,44 @@ func HandleDetailedFavorites(c echo.Context) error {
 
   if err != nil {
     return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
-      Error: true, 
+      Error: true,
       Message: "Unable to get favorites list",
     })
   }
 
   return c.JSON(http.StatusOK, interfaces.FavoritesDetailsResponse{
-    Error: false, 
+    Error: false,
     Message: "OK",
     Favorites: favorites,
   })
+}
+
+func HandleDeletingFavorite(c echo.Context) error {
+
+	// Get id element from params and convert to int
+	param := c.Param("id")
+
+	// *** Get user data from token
+	cookie, _ := c.Cookie("access-token")
+	token := cookie.Value
+	claims := &interfaces.JWTCustomClaims{}
+	jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+	  return configs.GetJWTSecret(), nil
+	})
+
+	favorite := models.DeleteFavorite(claims.ID, param)
+
+	if favorite != nil {
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+			Error: true,
+			Message: favorite.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, interfaces.GenericResponse{
+		Error:   false,
+		Message: "Favorite successfully deleted",
+	})
 }
 
 // HandleGetOrders Get user orders resume
@@ -205,13 +233,13 @@ func HandleGetOrders(c echo.Context) error {
 
   if err != nil {
     return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
-      Error: true, 
+      Error: true,
       Message: "Unable to get orders from database",
     })
   }
 
   return c.JSON(http.StatusOK, interfaces.OrdersResumeResponse{
-    Error: false, 
+    Error: false,
     Message: "Ok",
     Orders: orders,
   })

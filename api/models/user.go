@@ -7,10 +7,10 @@ import (
 	"log"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/SilviaPabon/buenavida-backend/configs"
 	"github.com/SilviaPabon/buenavida-backend/interfaces"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Connection db
@@ -174,7 +174,7 @@ func GetDetailedFavorites(userId int) ([]interfaces.Article, error){
 
   for rows.Next() {
     err = rows.Scan(&favoriteId)
-    
+
     if err != nil {
       return []interfaces.Article{}, err
     }
@@ -193,15 +193,43 @@ func GetDetailedFavorites(userId int) ([]interfaces.Article, error){
   return detailedFavorites, nil
 }
 
+func DeleteFavorite(userId int, idArticle string) (error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+	defer cancel()
+
+	// Get favorite
+	var favoriteId string
+
+	query := `SELECT "idArticle" FROM favorites
+			WHERE "idUser" = $1
+			AND "idArticle" = $2`
+
+	row := conn.QueryRowContext(ctx, query, userId, idArticle)
+
+	err := row.Scan(&favoriteId)
+
+	// Caution, deleting favs
+	if err == nil {
+		query = `DELETE FROM favorites
+			WHERE "idUser" = $1
+			AND "idArticle" = $2`
+		row = conn.QueryRowContext(ctx, query, userId, idArticle)
+		return row.Err()
+	} else {
+		return interfaces.ErrNotInFavorites
+	}
+
+}
+
 // GetUserOrdersResume Get user orders from database
 func GetUserOrdersResume(userId int) ([]interfaces.OrderResume, error){
   ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
   defer cancel()
 
   // *** Get orders list
-  query := `SELECT "idOrder" FROM orders 
+  query := `SELECT "idOrder" FROM orders
 	    WHERE "idUser" = $1`
-  
+
   rows, err := conn.QueryContext(ctx, query, userId)
   defer rows.Close()
 
@@ -222,7 +250,7 @@ func GetUserOrdersResume(userId int) ([]interfaces.OrderResume, error){
 
     query = `SELECT "idArticle", "amount" from orders_has_products
 	    WHERE "idOrder" = $1`
-    
+
     innerRows, err := conn.QueryContext(ctx, query, orderId)
     defer innerRows.Close()
 
@@ -245,7 +273,7 @@ func GetUserOrdersResume(userId int) ([]interfaces.OrderResume, error){
 
     // Add current order to final array
     orders = append(orders, interfaces.OrderResume{
-      Order: orderId, 
+      Order: orderId,
       Products: products,
     })
   }
