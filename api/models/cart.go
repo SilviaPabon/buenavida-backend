@@ -5,7 +5,9 @@ import (
 	"context"
 	"time"
 
+"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/SilviaPabon/buenavida-backend/configs"
+	"github.com/SilviaPabon/buenavida-backend/interfaces"
 )
 
 // Mongodb collections
@@ -36,7 +38,7 @@ func AddProductToCart(userId int, productId string) error {
 		row = pg.QueryRowContext(ctx, query, userId, productId, 1)
 		return row.Err() // Returns nil or error if some error exists
 	} else {
-		query = `UPDATE cart 
+		query = `UPDATE cart
 	    SET "amount" = "amount" + 1
 	    WHERE "idUser" = $1 AND "idArticle" = $2`
 		row = pg.QueryRowContext(ctx, query, userId, productId)
@@ -85,7 +87,6 @@ func DeleteCartProduct(idUser int, idArticle string) error {
 	query := `DELETE FROM cart  WHERE "idUser" = $1 AND "idArticle" = $2`
 	row := pg.QueryRowContext(ctx, query, idUser, idArticle)
 	return row.Err()
-
 }
 
 // GetCartLength Gets the user cart lenght
@@ -105,8 +106,44 @@ func GetCartLength(userId int) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-
+  
 	return count, nil
+}
+
+func GetCartByUser(userId int) ([]interfaces.CartItems, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var productCart interfaces.CartItems
+	var productIdString string
+	var productsCart []interfaces.CartItems
+
+	// Prepare query, getting the cart of user
+	query := `SELECT * FROM CART WHERE "idUser" = $1;`
+
+	rows, err := conn.QueryContext(ctx, query, userId)
+	defer rows.Close()
+
+	if err != nil {
+		return []interfaces.CartItems{}, err
+	}
+
+	for rows.Next() {
+	  //productCart.ID
+		err = rows.Scan(&productCart.Iduser, &productIdString, &productCart.Quantity)
+
+		// Convert string to mongo id
+		mid, _ := primitive.ObjectIDFromHex(productIdString)
+		productCart.ID = mid
+
+		productsCart = append(productsCart, productCart)
+		if err != nil {
+			return []interfaces.CartItems{}, err
+		}
+
+	}
+
+	return productsCart, nil
 }
 
 // CreateOrder Calls the stored procedure and creates the order from the user cart

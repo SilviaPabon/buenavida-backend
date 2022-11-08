@@ -2,6 +2,7 @@ package controllers
 
 import (
 	// "fmt"
+
 	"net/http"
 
 	"github.com/SilviaPabon/buenavida-backend/configs"
@@ -223,5 +224,55 @@ func HandleOrderPost(c echo.Context) error {
 	return c.JSON(http.StatusOK, interfaces.GenericResponse{
 		Error:   false,
 		Message: "Order was created successfully",
+	})
+
+}
+
+// obtains the information from cart of a user
+func HandleCartGet(c echo.Context) error {
+	// Get user id from access token
+	cookie, _ := c.Cookie("access-token")
+	token := cookie.Value
+	claims := &interfaces.JWTCustomClaims{}
+	jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+		return configs.GetJWTSecret(), nil
+	})
+
+	var responseCart = []interfaces.CartVerbose{}
+	var productInfo = interfaces.CartVerbose{}
+
+	// Verify cart of user
+	userCart, err := models.GetCartByUser(claims.ID)
+  
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Unable to get user cart from database",
+		})
+	}
+
+	if len(userCart) == 0 {
+		return c.JSON(http.StatusNotFound, interfaces.GenericCartProductsResponse{
+			Error:    false,
+			Message:  "Cart of user empty, nothing to show",
+			Products: responseCart,
+		})
+	}
+
+	//iterating each product
+	for _, product := range userCart {
+		rows, _ := models.GetDetailsFromID(product.ID.Hex())
+		productInfo.Name = rows.Name
+		productInfo.Units = rows.Units
+		productInfo.Quantity = product.Quantity
+		productInfo.Price = rows.Price
+		productInfo.Image = rows.Image
+		responseCart = append(responseCart, productInfo)
+	}
+
+	return c.JSON(http.StatusOK, interfaces.GenericCartProductsResponse{
+		Error:    false,
+		Message:  "Cart of user was generated succesfully",
+		Products: responseCart,
 	})
 }

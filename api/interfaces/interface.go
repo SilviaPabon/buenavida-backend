@@ -27,14 +27,15 @@ type ArticleImage struct {
 	Image  string             `bson:"image" json"image"`
 }
 
-type Cart_Items struct {
+type CartItems struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id, omitempty"`
-	Quantity int8               `bson:"quantity" "json:"quantity"`
+	Iduser   int8   `bson:"iduser" json:"iduser"`
+	Quantity int8   `bson:"quantity" "json:"quantity"`
 }
 
 type Order struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id, omitempty"`
-	Order    []Cart_Items       `bson:"order" json:"order"`
+	Order    []CartItems       `bson:"order" json:"order"`
 	Discount float64            `bson:"discount" json:"discount"`
 	Total    float64            `bson:"total" json:"total"`
 }
@@ -70,6 +71,14 @@ type JWTCustomClaims struct {
 
 type Favorite struct {
 	FavoriteId string
+}
+
+type CartVerbose struct {
+	Name     string  `json:"name"`
+	Units    string  `json:"units"`
+	Quantity int8    `json:"quantity"`
+	Price    float64 `json:"price"`
+	Image    string  `json:"image"`
 }
 
 type OrderProduct struct {
