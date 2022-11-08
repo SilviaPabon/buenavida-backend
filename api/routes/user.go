@@ -13,4 +13,5 @@ func SetupUserRoutes(e *echo.Echo) {
 	e.POST("/api/user/favorites", controllers.FavoritesPost, middlewares.MustProvideAccessToken)
 	e.GET("/api/user/favorites/list", controllers.FavoritesGET, middlewares.MustProvideAccessToken)
 	e.GET("/api/user/favorites/detailed", controllers.HandleDetailedFavorites, middlewares.MustProvideAccessToken)
+	e.GET("/api/user/orders", controllers.HandleGetOrders, middlewares.MustProvideAccessToken)
 }

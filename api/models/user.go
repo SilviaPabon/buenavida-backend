@@ -192,3 +192,64 @@ func GetDetailedFavorites(userId int) ([]interfaces.Article, error){
 
   return detailedFavorites, nil
 }
+
+// GetUserOrdersResume Get user orders from database
+func GetUserOrdersResume(userId int) ([]interfaces.OrderResume, error){
+  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  defer cancel()
+
+  // *** Get orders list
+  query := `SELECT "idOrder" FROM orders 
+	    WHERE "idUser" = $1`
+  
+  rows, err := conn.QueryContext(ctx, query, userId)
+  defer rows.Close()
+
+  if err != nil {
+    return []interfaces.OrderResume{}, err
+  }
+
+  // *** Ger orders details
+  var orderId int
+  orders := []interfaces.OrderResume{}
+
+  for rows.Next() { // For each user order
+    err = rows.Scan(&orderId)
+
+    if err != nil {
+      return []interfaces.OrderResume{}, err
+    }
+
+    query = `SELECT "idArticle", "amount" from orders_has_products
+	    WHERE "idOrder" = $1`
+    
+    innerRows, err := conn.QueryContext(ctx, query, orderId)
+    defer innerRows.Close()
+
+    if err != nil { // Select products on current order
+      return []interfaces.OrderResume{}, err
+    }
+
+    var products []interfaces.OrderProduct
+    var product interfaces.OrderProduct
+
+    for innerRows.Next(){
+      err = innerRows.Scan(&product.Product, &product.Amount)
+
+      if err != nil {
+	return []interfaces.OrderResume{}, err
+      }
+
+      products = append(products, product)
+    }
+
+    // Add current order to final array
+    orders = append(orders, interfaces.OrderResume{
+      Order: orderId, 
+      Products: products,
+    })
+  }
+
+  return orders, nil
+
+}

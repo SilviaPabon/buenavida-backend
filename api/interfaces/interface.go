@@ -80,3 +80,13 @@ type CartVerbose struct {
 	Price    float64 `json:"price"`
 	Image    string  `json:"image"`
 }
+
+type OrderProduct struct {
+  Product	string		`json:"product"`
+  Amount	int		`json:"amount"`
+}
+
+type OrderResume struct {
+  Order		int		`json:"order"`
+  Products	[]OrderProduct	`json:"products"`
+}
