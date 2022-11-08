@@ -35,3 +35,9 @@ type FavoritesDetailsResponse struct {
   Message	string		`json:"message"`
   Favorites	[]Article	`json:"favorites"`
 }
+
+type OrdersResumeResponse struct {
+  Error		bool		`json:"error"`
+  Message	string		`json:"message"`
+  Orders	[]OrderResume	`json:"orders"`
+}

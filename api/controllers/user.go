@@ -193,17 +193,27 @@ func HandleDetailedFavorites(c echo.Context) error {
 // HandleGetOrders Get user orders resume
 func HandleGetOrders(c echo.Context) error {
   // *** Get user data from token
-  // cookie, _ := c.Cookie("access-token")
-  // token := cookie.Value
-  // claims := &interfaces.JWTCustomClaims{}
-  // jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
-  //   return configs.GetJWTSecret(), nil
-  // })
+  cookie, _ := c.Cookie("access-token")
+  token := cookie.Value
+  claims := &interfaces.JWTCustomClaims{}
+  jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+    return configs.GetJWTSecret(), nil
+  })
 
   // *** Query database
-  return c.JSON(http.StatusOK, interfaces.GenericResponse{
+  orders, err := models.GetUserOrdersResume(claims.ID)
+
+  if err != nil {
+    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Unable to get orders from database",
+    })
+  }
+
+  return c.JSON(http.StatusOK, interfaces.OrdersResumeResponse{
     Error: false, 
     Message: "Ok",
+    Orders: orders,
   })
 
 }
