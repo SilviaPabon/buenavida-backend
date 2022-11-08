@@ -71,3 +71,13 @@ type JWTCustomClaims struct {
 type Favorite struct {
 	FavoriteId string
 }
+
+type OrderProduct struct {
+  Product	string		`json:"product"`
+  Amount	int		`json:"amount"`
+}
+
+type OrderResume struct {
+  Order		int		`json:"order"`
+  Products	[]OrderProduct	`json:"products"`
+}
