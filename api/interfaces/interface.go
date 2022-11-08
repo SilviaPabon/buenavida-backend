@@ -27,22 +27,15 @@ type ArticleImage struct {
 	Image  string             `bson:"image" json"image"`
 }
 
-type Cart_Items struct {
-	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id, omitempty"`
-	Iduser   int8   `bson:"iduser" json:"iduser"`
-	Quantity int8   `bson:"quantity" "json:"quantity"`
-}
-
-
 type CartItems struct {
-	ID       string `bson:"_id,omitempty" json:"id, omitempty"`
+	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id, omitempty"`
 	Iduser   int8   `bson:"iduser" json:"iduser"`
 	Quantity int8   `bson:"quantity" "json:"quantity"`
 }
 
 type Order struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id, omitempty"`
-	Order    []Cart_Items       `bson:"order" json:"order"`
+	Order    []CartItems       `bson:"order" json:"order"`
 	Discount float64            `bson:"discount" json:"discount"`
 	Total    float64            `bson:"total" json:"total"`
 }

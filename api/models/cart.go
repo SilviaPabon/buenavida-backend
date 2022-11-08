@@ -5,6 +5,7 @@ import (
 	"context"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/SilviaPabon/buenavida-backend/configs"
 	"github.com/SilviaPabon/buenavida-backend/interfaces"
 )
@@ -105,6 +106,7 @@ func GetCartByUser(userId int) ([]interfaces.CartItems, error) {
 	defer cancel()
 
 	var productCart interfaces.CartItems
+	var productIdString string
 	var productsCart []interfaces.CartItems
 
 	// Prepare query, getting the cart of user
@@ -118,7 +120,13 @@ func GetCartByUser(userId int) ([]interfaces.CartItems, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&productCart.Iduser, &productCart.ID, &productCart.Quantity)
+	  //productCart.ID
+		err = rows.Scan(&productCart.Iduser, &productIdString, &productCart.Quantity)
+
+		// Convert string to mongo id
+		mid, _ := primitive.ObjectIDFromHex(productIdString)
+		productCart.ID = mid
+
 		productsCart = append(productsCart, productCart)
 		if err != nil {
 			return []interfaces.CartItems{}, err
