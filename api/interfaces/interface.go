@@ -74,6 +74,7 @@ type Favorite struct {
 }
 
 type CartVerbose struct {
+	Id	 string  `json:"id"`
 	Name     string  `json:"name"`
 	Units    string  `json:"units"`
 	Quantity int8    `json:"quantity"`

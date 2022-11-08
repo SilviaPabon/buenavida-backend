@@ -262,6 +262,7 @@ func HandleCartGet(c echo.Context) error {
 	//iterating each product
 	for _, product := range userCart {
 		rows, _ := models.GetDetailsFromID(product.ID.Hex())
+		productInfo.Id = rows.ID.Hex()
 		productInfo.Name = rows.Name
 		productInfo.Units = rows.Units
 		productInfo.Quantity = product.Quantity
