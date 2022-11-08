@@ -119,3 +119,26 @@ func CreateOrder(userId int) error {
 	row := pg.QueryRowContext(ctx, query, userId)
 	return row.Err() // Returns error if any
 }
+
+// SearchProductOnCart Returns if the product exists on the user cart
+func SearchProductOnCart(userId int, productId string)(bool, error){
+  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  defer cancel()
+
+  query := `SELECT COUNT("idArticle") FROM cart
+	    WHERE "idUser" = $1 AND "idArticle" = $2`
+  
+  row := conn.QueryRowContext(ctx, query, userId, productId)
+  var count int
+  err := row.Scan(&count)
+
+  if err != nil{
+    return false, err
+  }
+
+  if count != 1 {
+    return false, nil
+  }
+
+  return true, nil
+}

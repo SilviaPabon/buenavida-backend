@@ -150,8 +150,25 @@ func DeleteCartProduct(c echo.Context) error {
 		return configs.GetJWTSecret(), nil
 	})
 
-	// Save on database
-	err := models.DeleteCartProduct(claims.ID, payload.Id.Hex())
+	// Verify product exists on cart
+	exists, err := models.SearchProductOnCart(claims.ID, payload.Id.Hex())
+
+	if err != nil {
+	  return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+	    Error: true, 
+	    Message: "Unable to find if the product exits",
+	  })
+	}
+
+	if !exists {
+	  return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
+	    Error: true, 
+	    Message: "Product was nos found on user cart",
+	  })
+	}
+
+	// Delete from database
+	err = models.DeleteCartProduct(claims.ID, payload.Id.Hex())
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
