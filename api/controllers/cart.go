@@ -125,6 +125,65 @@ func HandleCartPut(c echo.Context) error {
 	})
 }
 
+func DeleteCartProduct(c echo.Context) error {
+
+	payload := new(interfaces.ProductIdPayload)
+
+	if err := c.Bind(payload); err != nil {
+		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Unable to process request.",
+		})
+	}
+
+	if payload.Id.IsZero() { // Validate provided object id
+		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Provided object id is emtpy or not valid",
+		})
+	}
+
+	// Get user id from token
+	cookie, _ := c.Cookie("access-token")
+	token := cookie.Value
+	claims := &interfaces.JWTCustomClaims{}
+	jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+		return configs.GetJWTSecret(), nil
+	})
+
+	// Verify product exists on cart
+	exists, err := models.SearchProductOnCart(claims.ID, payload.Id.Hex())
+
+	if err != nil {
+	  return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+	    Error: true, 
+	    Message: "Unable to find if the product exits",
+	  })
+	}
+
+	if !exists {
+	  return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
+	    Error: true, 
+	    Message: "Product was nos found on user cart",
+	  })
+	}
+
+	// Delete from database
+	err = models.DeleteCartProduct(claims.ID, payload.Id.Hex())
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Product could not be removed from cart.",
+		})
+	}
+
+	return c.JSON(http.StatusOK, interfaces.GenericResponse{
+		Error:   false,
+		Message: "Product delete to the cart successfully",
+	})
+}
+
 // HandleOrderPost creates an order from the items on cart
 func HandleOrderPost(c echo.Context) error {
 	// Get user id from access token
@@ -184,6 +243,7 @@ func HandleCartGet(c echo.Context) error {
 
 	// Verify cart of user
 	userCart, err := models.GetCartByUser(claims.ID)
+  
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
 			Error:   true,

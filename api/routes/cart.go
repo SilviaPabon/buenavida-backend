@@ -16,4 +16,6 @@ func SetupCartRoutes(e *echo.Echo) {
 	e.POST("/api/order", controllers.HandleOrderPost, middlewares.MustProvideAccessToken)
 	// Obtain cart from user
 	e.GET("/api/cart", controllers.HandleCartGet, middlewares.MustProvideAccessToken)
+	//Delete cart
+	e.DELETE("/api/cart", controllers.DeleteCartProduct, middlewares.MustProvideAccessToken)
 }

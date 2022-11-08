@@ -5,7 +5,7 @@ import (
 	"context"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
+"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/SilviaPabon/buenavida-backend/configs"
 	"github.com/SilviaPabon/buenavida-backend/interfaces"
 )
@@ -44,7 +44,6 @@ func AddProductToCart(userId int, productId string) error {
 		row = pg.QueryRowContext(ctx, query, userId, productId)
 		return row.Err()
 	}
-
 }
 
 // UpdateProductInCart Update the amount of some product on database
@@ -80,6 +79,16 @@ func UpdateProductInCart(userId, amount int, productId string) error {
 	}
 }
 
+func DeleteCartProduct(idUser int, idArticle string) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	query := `DELETE FROM cart  WHERE "idUser" = $1 AND "idArticle" = $2`
+	row := pg.QueryRowContext(ctx, query, idUser, idArticle)
+	return row.Err()
+}
+
 // GetCartLength Gets the user cart lenght
 func GetCartLength(userId int) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -97,7 +106,7 @@ func GetCartLength(userId int) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-
+  
 	return count, nil
 }
 
@@ -146,4 +155,27 @@ func CreateOrder(userId int) error {
 	query := `CALL make_order($1)`
 	row := pg.QueryRowContext(ctx, query, userId)
 	return row.Err() // Returns error if any
+}
+
+// SearchProductOnCart Returns if the product exists on the user cart
+func SearchProductOnCart(userId int, productId string)(bool, error){
+  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+  defer cancel()
+
+  query := `SELECT COUNT("idArticle") FROM cart
+	    WHERE "idUser" = $1 AND "idArticle" = $2`
+  
+  row := conn.QueryRowContext(ctx, query, userId, productId)
+  var count int
+  err := row.Scan(&count)
+
+  if err != nil{
+    return false, err
+  }
+
+  if count != 1 {
+    return false, nil
+  }
+
+  return true, nil
 }

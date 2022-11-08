@@ -8,15 +8,9 @@ import (
 
 // SetupuserRoutes create and manage user routes
 func SetupUserRoutes(e *echo.Echo) {
-
-	/* e.GET("/user/ping", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Pong!!")
-	}) */
-
-	//e.GET("/api/user/:id", controllers.HandleUserGet)
 	e.POST("/api/user", controllers.HandleUserPost)
 	// update favorites from user
 	e.POST("/api/user/favorites", controllers.FavoritesPost, middlewares.MustProvideAccessToken)
-	// Obtain favorites from user
-	e.GET("/api/user/favorites", controllers.FavoritesGET, middlewares.MustProvideAccessToken)
+	e.GET("/api/user/favorites/list", controllers.FavoritesGET, middlewares.MustProvideAccessToken)
+	e.GET("/api/user/favorites/detailed", controllers.HandleDetailedFavorites, middlewares.MustProvideAccessToken)
 }

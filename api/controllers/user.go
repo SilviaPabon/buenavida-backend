@@ -137,6 +137,7 @@ func FavoritesPost(c echo.Context) error {
 
 }
 
+// FavoritesGET Get favorires ids
 func FavoritesGET(c echo.Context) error {
 	// Get user id from token
 	cookie, _ := c.Cookie("access-token")
@@ -155,9 +156,36 @@ func FavoritesGET(c echo.Context) error {
 		})
 	}
 
-	return c.JSON(http.StatusOK, interfaces.FavoritesResponse{
+	return c.JSON(http.StatusOK, interfaces.FavoritesListResponse{
 		Error:     false,
 		Message:   "OK",
 		Favorites: favorites,
 	})
+}
+
+// HandlelDetailedFavorites Get favorites details
+func HandleDetailedFavorites(c echo.Context) error {
+  // *** Get user data from token
+  cookie, _ := c.Cookie("access-token")
+  token := cookie.Value
+  claims := &interfaces.JWTCustomClaims{}
+  jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+    return configs.GetJWTSecret(), nil
+  })
+
+  // *** Query database
+  favorites, err := models.GetDetailedFavorites(claims.ID)
+
+  if err != nil {
+    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+      Error: true, 
+      Message: "Unable to get favorites list",
+    })
+  }
+
+  return c.JSON(http.StatusOK, interfaces.FavoritesDetailsResponse{
+    Error: false, 
+    Message: "OK",
+    Favorites: favorites,
+  })
 }

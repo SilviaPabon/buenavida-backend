@@ -24,7 +24,7 @@ type LoginResponse struct {
 	User    PublicUser `json:"user"`
 }
 
-type FavoritesResponse struct {
+type FavoritesListResponse struct {
 	Error     bool     `json:"error"`
 	Message   string   `json:"message"`
 	Favorites []string `json:"favorites"`
@@ -34,4 +34,10 @@ type GenericCartProductsResponse struct {
 	Error    bool          `json:"error"`
 	Message  string        `json:"message"`
 	Products []CartVerbose `json:"products"`
+ }
+
+type FavoritesDetailsResponse struct {
+  Error		bool 		`json:"error"`
+  Message	string		`json:"message"`
+  Favorites	[]Article	`json:"favorites"`
 }
