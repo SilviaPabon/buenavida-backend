@@ -14,4 +14,6 @@ func SetupCartRoutes(e *echo.Echo) {
 	e.PUT("/api/cart", controllers.HandleCartPut, middlewares.MustProvideAccessToken)
 	// Create an order from the cart items
 	e.POST("/api/order", controllers.HandleOrderPost, middlewares.MustProvideAccessToken)
+	// Obtain cart from user
+	e.GET("/api/cart", controllers.HandleCartGet, middlewares.MustProvideAccessToken)
 }
