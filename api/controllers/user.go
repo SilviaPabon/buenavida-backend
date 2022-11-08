@@ -7,6 +7,7 @@ import (
 	"github.com/SilviaPabon/buenavida-backend/interfaces"
 	"github.com/SilviaPabon/buenavida-backend/models"
 	"github.com/SilviaPabon/buenavida-backend/utils"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -165,55 +166,100 @@ func FavoritesGET(c echo.Context) error {
 
 // HandlelDetailedFavorites Get favorites details
 func HandleDetailedFavorites(c echo.Context) error {
-  // *** Get user data from token
-  cookie, _ := c.Cookie("access-token")
-  token := cookie.Value
-  claims := &interfaces.JWTCustomClaims{}
-  jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
-    return configs.GetJWTSecret(), nil
-  })
+	// *** Get user data from token
+	cookie, _ := c.Cookie("access-token")
+	token := cookie.Value
+	claims := &interfaces.JWTCustomClaims{}
+	jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+		return configs.GetJWTSecret(), nil
+	})
 
-  // *** Query database
-  favorites, err := models.GetDetailedFavorites(claims.ID)
+	// *** Query database
+	favorites, err := models.GetDetailedFavorites(claims.ID)
 
-  if err != nil {
-    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
-      Error: true, 
-      Message: "Unable to get favorites list",
-    })
-  }
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Unable to get favorites list",
+		})
+	}
 
-  return c.JSON(http.StatusOK, interfaces.FavoritesDetailsResponse{
-    Error: false, 
-    Message: "OK",
-    Favorites: favorites,
-  })
+	return c.JSON(http.StatusOK, interfaces.FavoritesDetailsResponse{
+		Error:     false,
+		Message:   "OK",
+		Favorites: favorites,
+	})
+}
+
+func HandleDeletingFavorite(c echo.Context) error {
+	// Get id element from params and convert to int
+	param := c.Param("id")
+
+	// Validate provided id is an object id
+	_, err := primitive.ObjectIDFromHex(param)
+
+	if err != nil {
+	  return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+	    Error: true, 
+	    Message: "The provided product id is not valid",
+	  })
+	}
+
+	// *** Get user data from token
+	cookie, _ := c.Cookie("access-token")
+	token := cookie.Value
+	claims := &interfaces.JWTCustomClaims{}
+	jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+		return configs.GetJWTSecret(), nil
+	})
+
+	err = models.DeleteFavorite(claims.ID, param)
+
+	if err != nil {
+		switch err {
+		case interfaces.ErrNotInFavorites:
+			return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
+				Error:   true,
+				Message: "Product doesn't exists on user favorites",
+			})
+		default:
+			return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+				Error:   true,
+				Message: "Unable to remove favorite from database",
+			})
+		}
+	}
+
+	return c.JSON(http.StatusOK, interfaces.GenericResponse{
+		Error:   false,
+		Message: "Favorite successfully deleted",
+	})
 }
 
 // HandleGetOrders Get user orders resume
 func HandleGetOrders(c echo.Context) error {
-  // *** Get user data from token
-  cookie, _ := c.Cookie("access-token")
-  token := cookie.Value
-  claims := &interfaces.JWTCustomClaims{}
-  jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
-    return configs.GetJWTSecret(), nil
-  })
+	// *** Get user data from token
+	cookie, _ := c.Cookie("access-token")
+	token := cookie.Value
+	claims := &interfaces.JWTCustomClaims{}
+	jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
+		return configs.GetJWTSecret(), nil
+	})
 
-  // *** Query database
-  orders, err := models.GetUserOrdersResume(claims.ID)
+	// *** Query database
+	orders, err := models.GetUserOrdersResume(claims.ID)
 
-  if err != nil {
-    return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
-      Error: true, 
-      Message: "Unable to get orders from database",
-    })
-  }
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Unable to get orders from database",
+		})
+	}
 
-  return c.JSON(http.StatusOK, interfaces.OrdersResumeResponse{
-    Error: false, 
-    Message: "Ok",
-    Orders: orders,
-  })
+	return c.JSON(http.StatusOK, interfaces.OrdersResumeResponse{
+		Error:   false,
+		Message: "Ok",
+		Orders:  orders,
+	})
 
 }
