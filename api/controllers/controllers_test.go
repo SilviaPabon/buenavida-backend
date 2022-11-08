@@ -542,7 +542,7 @@ func TestCartSuccess(t *testing.T) {
 
 	// Obtain the user id
 	var id string
-	query := `SELECT "id" FROM users 
+	query := `SELECT "id" FROM users
 	    WHERE "mail" = $1;`
 
 	row := pg.QueryRowContext(ctx, query, randEmail)
@@ -568,7 +568,7 @@ func TestCartSuccess(t *testing.T) {
 	// So, replace it with a valid MongoID in your case
 	sid := "63672963967f1548b29a6ff2"
 	oid, _ := primitive.ObjectIDFromHex(sid)
-	addToCartPayload := interfaces.AddToCartPayload{
+	addToCartPayload := interfaces.ProductIdPayload{
 		Id: oid,
 	}
 
@@ -579,7 +579,7 @@ func TestCartSuccess(t *testing.T) {
 	c.Equalf(http.StatusOK, w.Code, fmt.Sprintf("Expected status code to be: %d but got: %d", http.StatusOK, w.Code))
 
 	// Validate the amount on user cart
-	query = `SELECT "amount" FROM cart 
+	query = `SELECT "amount" FROM cart
 	    WHERE "idUser" = $1 AND "idArticle" = $2`
 
 	var productsOnCart int
