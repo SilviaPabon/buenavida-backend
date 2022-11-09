@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/SilviaPabon/buenavida-backend/configs"
 	"github.com/SilviaPabon/buenavida-backend/routes"
 	"github.com/labstack/echo/v4"
-	"os"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -18,6 +20,11 @@ func main() {
 	// ### ### ###
 	// Echo setup
 	e := echo.New()
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"https://splendid-piroshki-dade21.netlify.app"},
+		AllowCredentials: true,
+	}))
 
 	// Start routes
 	routes.SetupProductsRoutes(e)
