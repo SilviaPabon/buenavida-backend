@@ -1,4 +1,7 @@
-**/database/
+**/_mongo
+**/_postgres
+**/_redis
 **/tmp/
 **/.git/
 **/.env
+**/*.out

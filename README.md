@@ -1,42 +1,83 @@
 # Buenavida back-end
 
-## Create .env file
+📜 You can find more documentation on `/docs` folder.
 
-Create a `.env` file inside `api/` folder. You should specify the following values:
+## Setup
 
-```
-MONGO_USER=youruser
-MONGO_PASSWORD=yourpassword
-MONGO_HOST=yourhost
-MONGO_PORT=yourport
-```
+To start the project at the first time:
 
-If you want to use the provided docker-compose file as development environment, your `MONGO_USER` and `MONGO_PASSWORD` are both `admin`.
+### Create the `.env` files:
 
-## Build docker images
-
-Create api / golang image
+From the `api/` folder, create a `.env` file and define the following values (**for development environment using the provided `docker-compose` file):
 
 ```
-docker build -t buenavida/api .
+MONGO_USER=admin
+MONGO_PASSWORD=admin
+MONGO_HOST=localhost
+MONGO_PORT=27017
+PG_USER=admin
+PG_PASSWORD=admin
+PG_HOST=localhost
+PG_PORT=5432
+PG_DATABASE=buenavida
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=admin
+REDIS_DATABASE=0
+JWT_KEY={4Z!502lmtA4Guo6shSnaC+(8$bpR4Q+
 ```
 
-Build docker-compose file
+From the `bulkdata/` folder, create a `.env`file and define the following values (**for development environment using the provided `docker-compose` file):
 
 ```
-docker-compose build
+MONGO_USER=admin
+MONGO_PASSWORD=admin
+MONGO_HOST=localhost
+MONGO_PORT=27017
 ```
 
-Run docker-compose file
+### Setup postgres database
 
-```
+Start docker containers: 
+
+```bash
 docker-compose up
 ```
 
-You should see some MongoDB logging messages on your `docker-compose` console and some message similar to: 
+The **first time** you start the docker-compose file, run the following commands to create the database and it's tables:
 
-```
-🟩 Connected to mongo 🟩
+1. Create an interactive shell into the postgres container:
+
+```bash
+docker exec -it $(docker ps --filter NAME=pg_database --format "{{.ID}}") /bin/bash
 ```
 
-Otherwise, you should see an error message. 
+2. Execute the init.sql script:
+
+```bash
+psql -U admin -a -f files/init.sql
+```
+
+3. Stop and restart the container (`Ctrol + C`, `docker-compose up`).
+
+### Start development environment
+
+1. Run the docker containers:
+
+```bash
+docker-compose up
+```
+
+2. Start the golang api: 
+
+You have to install [air](https://github.com/cosmtrek/air) to complete the next step:
+
+```bash
+go install github.com/cosmtrek/air@latest
+```
+
+**From `/api` folder:**
+
+```bash
+./listen.sh
+```

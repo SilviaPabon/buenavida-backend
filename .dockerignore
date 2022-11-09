@@ -1,4 +1,5 @@
 database/
+bulkdata/
 Dockerfile
 docker-compose.yml
 README.md

@@ -12,18 +12,33 @@ services:
         MONGO_INITDB_ROOT_PASSWORD: admin
         MONGO_INITDB_DATABASE: buenavida
     volumes:
-      - ./database:/data/db
-  
-  api:
-    build: .
-    restart: on-failure
+      - ./_mongo:/data/db
+
+  pg: 
+    image: postgres:alpine3.16
+    container_name: pg_database
+    restart: always
     ports: 
-      - '3030:3030'
-    links: 
-      - mongo
-    container_name: golang_api
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DATABASE: buenavida
+    volumes: 
+      - ./_postgres:/var/lib/postgresql/data
+      # Copy files into the container to initialize the
+      # first time
+      - ./database:/files 
+ 
+  redis: 
+    image: redis:6.2.7-bullseye
+    container_name: redis_database
+    restart: always
+    ports: 
+      - '6379:6379'
+    environment:
+      REDIS_PASSWORD: admin
     depends_on:
-      - mongo
+      - pg
     volumes:
-      - ./api/:/usr/src/buenavida/api
-    command: air
+      - ./_redis:/data

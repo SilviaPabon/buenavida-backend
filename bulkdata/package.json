@@ -1,0 +1,21 @@
+{
+  "name": "bulkdata",
+  "version": "1.0.0",
+  "description": "Insert products data into mongo database",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "bulk": "node script.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "16.0.3",
+    "mongoose": "6.6.7"
+  },
+  "devDependencies": {
+    "prettier": "2.7.1"
+  }
+}

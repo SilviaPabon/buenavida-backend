@@ -1,23 +1,38 @@
 package main
 
-import(
-  "net/http"
-  "github.com/labstack/echo/v4"
-  "github.com/SilviaPabon/buenavida-backend/configs"
+import (
+	"fmt"
+	"github.com/SilviaPabon/buenavida-backend/configs"
+	"github.com/SilviaPabon/buenavida-backend/routes"
+	"github.com/labstack/echo/v4"
+	"os"
 )
 
-func main(){
-  // ### ### ###
-  // Create database connection
-  configs.ConnectToMongo()
+func main() {
+	// ### ### ###
+	// Create mongo database connection
+	configs.ConnectToMongo()
 
-  // ### ### ###
-  // Echo setup
-  e := echo.New()
+	//db := configs.ConnectToPostgres()
 
-  e.GET("/ping", func(c echo.Context) error {
-    return c.String(http.StatusOK, "Pong!!")
-  })
+	// ### ### ###
+	// Echo setup
+	e := echo.New()
 
-  e.Logger.Fatal(e.Start(":3030"))
+	// Start routes
+	routes.SetupProductsRoutes(e)
+	routes.SetupUserRoutes(e)
+	routes.SetupSessionRoutes(e)
+	routes.SetupCartRoutes(e)
+
+	// ### ### ###
+	// Configure port
+
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = "3030"
+	}
+
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }
