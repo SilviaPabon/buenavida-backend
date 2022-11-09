@@ -38,10 +38,10 @@ func GetRefreshTokenFromRedis(owner string) (string, error) {
 }
 
 // DeleteRegreshTokenFromRedis Deletes a token from the user email
-func DeleteRefreshTokenFromRedis(owner string) (error) {
-  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
-  defer cancel()
+func DeleteRefreshTokenFromRedis(owner string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-  err := redis.Del(ctx, owner).Err()
-  return err
+	err := redis.Del(ctx, owner).Err()
+	return err
 }

@@ -7,10 +7,10 @@ import (
 	"github.com/SilviaPabon/buenavida-backend/interfaces"
 	"github.com/SilviaPabon/buenavida-backend/models"
 	"github.com/SilviaPabon/buenavida-backend/utils"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // HandleUserPost create a new user
@@ -199,10 +199,10 @@ func HandleDeletingFavorite(c echo.Context) error {
 	_, err := primitive.ObjectIDFromHex(param)
 
 	if err != nil {
-	  return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
-	    Error: true, 
-	    Message: "The provided product id is not valid",
-	  })
+		return c.JSON(http.StatusBadRequest, interfaces.GenericResponse{
+			Error:   true,
+			Message: "The provided product id is not valid",
+		})
 	}
 
 	// *** Get user data from token

@@ -3,13 +3,13 @@ package controllers
 import (
 	// "fmt"
 
-	"net/http"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/SilviaPabon/buenavida-backend/configs"
 	"github.com/SilviaPabon/buenavida-backend/interfaces"
 	"github.com/SilviaPabon/buenavida-backend/models"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"net/http"
 )
 
 // HandleCartPost add a new product to the cart
@@ -148,17 +148,17 @@ func DeleteCartProduct(c echo.Context) error {
 	exists, err := models.SearchProductOnCart(claims.ID, id)
 
 	if err != nil {
-	  return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
-	    Error: true, 
-	    Message: "Unable to find if the product exits",
-	  })
+		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Unable to find if the product exits",
+		})
 	}
 
 	if !exists {
-	  return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
-	    Error: true, 
-	    Message: "Product was nos found on user cart",
-	  })
+		return c.JSON(http.StatusNotFound, interfaces.GenericResponse{
+			Error:   true,
+			Message: "Product was nos found on user cart",
+		})
 	}
 
 	// Delete from database
@@ -236,7 +236,7 @@ func HandleCartGet(c echo.Context) error {
 
 	// Verify cart of user
 	userCart, err := models.GetCartByUser(claims.ID)
-  
+
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, interfaces.GenericResponse{
 			Error:   true,

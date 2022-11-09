@@ -29,13 +29,13 @@ type ArticleImage struct {
 
 type CartItems struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id, omitempty"`
-	Iduser   int8   `bson:"iduser" json:"iduser"`
-	Quantity int8   `bson:"quantity" "json:"quantity"`
+	Iduser   int8               `bson:"iduser" json:"iduser"`
+	Quantity int8               `bson:"quantity" "json:"quantity"`
 }
 
 type Order struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id, omitempty"`
-	Order    []CartItems       `bson:"order" json:"order"`
+	Order    []CartItems        `bson:"order" json:"order"`
 	Discount float64            `bson:"discount" json:"discount"`
 	Total    float64            `bson:"total" json:"total"`
 }
@@ -74,7 +74,7 @@ type Favorite struct {
 }
 
 type CartVerbose struct {
-	Id	 string  `json:"id"`
+	Id       string  `json:"id"`
 	Name     string  `json:"name"`
 	Units    string  `json:"units"`
 	Quantity int8    `json:"quantity"`
@@ -83,11 +83,11 @@ type CartVerbose struct {
 }
 
 type OrderProduct struct {
-  Product	string		`json:"product"`
-  Amount	int		`json:"amount"`
+	Product string `json:"product"`
+	Amount  int    `json:"amount"`
 }
 
 type OrderResume struct {
-  Order		int		`json:"order"`
-  Products	[]OrderProduct	`json:"products"`
+	Order    int            `json:"order"`
+	Products []OrderProduct `json:"products"`
 }

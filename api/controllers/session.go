@@ -220,7 +220,7 @@ func HandleLogout(c echo.Context) error {
 	// *** Send tokens as cookies
 	accessCookie := new(http.Cookie)
 	accessCookie.Name = "access-token"
-	accessCookie.Value = "" // Empty string 
+	accessCookie.Value = "" // Empty string
 	accessCookie.Expires = time.Now().Add(2 * time.Second)
 	accessCookie.HttpOnly = true
 	accessCookie.Path = "/"

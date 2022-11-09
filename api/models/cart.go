@@ -5,9 +5,9 @@ import (
 	"context"
 	"time"
 
-"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/SilviaPabon/buenavida-backend/configs"
 	"github.com/SilviaPabon/buenavida-backend/interfaces"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Mongodb collections
@@ -106,7 +106,7 @@ func GetCartLength(userId int) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-  
+
 	return count, nil
 }
 
@@ -129,7 +129,7 @@ func GetCartByUser(userId int) ([]interfaces.CartItems, error) {
 	}
 
 	for rows.Next() {
-	  //productCart.ID
+		//productCart.ID
 		err = rows.Scan(&productCart.Iduser, &productIdString, &productCart.Quantity)
 
 		// Convert string to mongo id
@@ -158,24 +158,24 @@ func CreateOrder(userId int) error {
 }
 
 // SearchProductOnCart Returns if the product exists on the user cart
-func SearchProductOnCart(userId int, productId string)(bool, error){
-  ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
-  defer cancel()
+func SearchProductOnCart(userId int, productId string) (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-  query := `SELECT COUNT("idArticle") FROM cart
+	query := `SELECT COUNT("idArticle") FROM cart
 	    WHERE "idUser" = $1 AND "idArticle" = $2`
-  
-  row := conn.QueryRowContext(ctx, query, userId, productId)
-  var count int
-  err := row.Scan(&count)
 
-  if err != nil{
-    return false, err
-  }
+	row := conn.QueryRowContext(ctx, query, userId, productId)
+	var count int
+	err := row.Scan(&count)
 
-  if count != 1 {
-    return false, nil
-  }
+	if err != nil {
+		return false, err
+	}
 
-  return true, nil
+	if count != 1 {
+		return false, nil
+	}
+
+	return true, nil
 }
