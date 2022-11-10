@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/SilviaPabon/buenavida-backend/configs"
 	"github.com/SilviaPabon/buenavida-backend/routes"
 	"github.com/labstack/echo/v4"
-	"os"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -18,6 +20,12 @@ func main() {
 	// ### ### ###
 	// Echo setup
 	e := echo.New()
+
+	// Change this to "http://localhost:5173" for local tests
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowCredentials: true,
+	}))
 
 	// Start routes
 	routes.SetupProductsRoutes(e)
