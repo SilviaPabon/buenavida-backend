@@ -95,6 +95,8 @@ func HandleLogin(c echo.Context) error {
 	// This should be equal to the one in utils.go file
 	accessCookie.Expires = time.Now().Add(15 * time.Minute)
 	accessCookie.HttpOnly = true
+	accessCookie.Domain = "http://localhost:5173"
+	accessCookie.SameSite = http.SameSiteStrictMode
 	accessCookie.Path = "/" // Valid for all paths
 
 	refreshCookie := new(http.Cookie)
@@ -102,6 +104,8 @@ func HandleLogin(c echo.Context) error {
 	refreshCookie.Value = refreshToken
 	refreshCookie.Expires = time.Now().Add(6 * time.Hour)
 	refreshCookie.HttpOnly = true
+	refreshCookie.Domain = "http://localhost:5173"
+	accessCookie.SameSite = http.SameSiteStrictMode
 	refreshCookie.Path = "/api/session/refresh"
 
 	// *** Send cookies on response ***
@@ -179,6 +183,8 @@ func HandleRefresh(c echo.Context) error {
 	// This should be equal to the one in utils.go file
 	accessCookie.Expires = time.Now().Add(15 * time.Minute)
 	accessCookie.HttpOnly = true
+	accessCookie.Domain = "http://localhost:5173"
+	accessCookie.SameSite = http.SameSiteStrictMode
 	accessCookie.Path = "/" // Valid for all paths
 
 	// *** Send cookies on response ***
@@ -223,6 +229,8 @@ func HandleLogout(c echo.Context) error {
 	accessCookie.Value = "" // Empty string
 	accessCookie.Expires = time.Now().Add(2 * time.Second)
 	accessCookie.HttpOnly = true
+	accessCookie.Domain = "http://localhost:5173"
+	accessCookie.SameSite = http.SameSiteStrictMode
 	accessCookie.Path = "/"
 
 	refreshCookie := new(http.Cookie)
@@ -230,6 +238,8 @@ func HandleLogout(c echo.Context) error {
 	refreshCookie.Value = "" // Empty string
 	refreshCookie.Expires = time.Now().Add(2 * time.Second)
 	refreshCookie.HttpOnly = true
+	refreshCookie.Domain = "http://localhost:5173"
+	refreshCookie.SameSite = http.SameSiteStrictMode
 	refreshCookie.Path = "/api/session/refresh"
 
 	c.SetCookie(accessCookie)
