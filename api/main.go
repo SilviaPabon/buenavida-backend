@@ -21,6 +21,7 @@ func main() {
 	// Echo setup
 	e := echo.New()
 
+	// Change this to "http://localhost:5173" for local tests
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{"https://splendid-piroshki-dade21.netlify.app"},
 		AllowCredentials: true,
